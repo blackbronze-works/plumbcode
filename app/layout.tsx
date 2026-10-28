@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Fraunces, Geist } from "next/font/google";
+import { Lexend, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "next-themes";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
-const font = Fraunces({
-  variable: "--font-geist-sans",
+const lexend = Lexend({
+  variable: "--font-lexend",
   subsets: ["latin"],
 });
 
@@ -16,17 +16,16 @@ export const metadata: Metadata = {
   description: "Plumbcode",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html
       lang="en"
-      className={cn(
-        "h-full",
-        "antialiased",
-        font.variable,
-        "font-sans",
-        geist.variable,
-      )}
+      suppressHydrationWarning
+      className={cn("h-full antialiased", geist.variable, lexend.variable)}
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
