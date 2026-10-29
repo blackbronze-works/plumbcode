@@ -9,6 +9,7 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 const lexend = Lexend({
   variable: "--font-lexend",
   subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -25,10 +26,10 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("h-full antialiased", geist.variable, lexend.variable)}
+      className={cn("antialiased", geist.variable, lexend.variable)}
     >
       <body className="min-h-full flex flex-col">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           {children}
         </ThemeProvider>
       </body>

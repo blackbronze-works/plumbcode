@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useSyncExternalStore, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import ThemeToggle from "../ThemeToggle";
 
 const NAV = [
   { label: "Product", href: "#product" },
@@ -49,7 +50,7 @@ const Header = () => {
         className={cn(
           "mx-auto grid grid-cols-3 items-center border px-4 py-3 transition-all duration-300 ease-out sm:px-6",
           scrolled
-            ? "max-w-6xl rounded-full border-neutral-200/60 bg-white/50 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-950/50"
+            ? "max-w-6xl rounded-full border-neutral-200/30 bg-white/30 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-950/30"
             : "max-w-7xl rounded-full border-transparent bg-transparent backdrop-blur-none",
         )}
       >
@@ -85,7 +86,7 @@ const Header = () => {
             <Link
               key={item.label}
               href={item.href}
-              className="text-sm font-medium text-neutral-700 transition-colors hover:text-neutral-950 dark:text-neutral-300 dark:hover:text-white"
+              className="text-sm text-neutral-700 transition-colors hover:text-neutral-950 dark:text-neutral-300 dark:hover:text-white"
             >
               {item.label}
             </Link>
@@ -94,18 +95,18 @@ const Header = () => {
 
         {/* Section 3: Right Side Actions (Right - 1/3 width, right-aligned) */}
         <div className="col-span-2 flex items-center justify-end gap-2 md:col-span-1">
-          {/* <ThemeToggle /> */}
+          <ThemeToggle />
 
           <Link
             href="/login"
-            className="hidden px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:text-neutral-950 dark:text-neutral-300 dark:hover:text-white sm:inline-block"
+            className="hidden px-3 py-2 text-sm text-neutral-700 transition-colors hover:text-neutral-950 dark:text-neutral-300 dark:hover:text-white sm:inline-block"
           >
             Sign in
           </Link>
 
           <Link
             href="/install"
-            className="hidden rounded-full bg-neutral-950 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200 sm:inline-block"
+            className="hidden rounded-full bg-neutral-950 px-4 py-2 text-sm text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200 sm:inline-block"
           >
             Install on GitHub
           </Link>
