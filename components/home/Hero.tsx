@@ -3,48 +3,12 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import LightRays from "../LightRays";
 import { Button } from "../ui/button";
 import { GithubIcon } from "../GithubIcon";
 
 const Hero = () => {
   return (
     <section className="relative flex min-h-screen flex-col items-center overflow-hidden px-4 pb-24 pt-36 sm:px-6">
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 1.0 }}
-        className="absolute inset-0 z-[-1]"
-      >
-        <LightRays
-          className=""
-          raysOrigin="top-center"
-          raysColor="#ffffff"
-          raysSpeed={1.5}
-          lightSpread={0.5}
-          rayLength={3}
-          glow={0.6}
-          haze={0.25}
-          followMouse={false}
-          mouseInfluence={0.1}
-          rayDensity={1}
-          tilt={0}
-          raySharpness={0.35}
-          atmosphere={1}
-          intensity={1}
-          fadeDistance={0.8}
-          saturation={1}
-          noiseAmount={0}
-          distortion={0}
-          pulsating={false}
-          cursorShadow
-          clickPulse
-          intro
-          lightMode={false}
-        />
-        <div className="absolute bottom-0 left-0 h-[30%] w-full bg-linear-to-t from-white to-transparent dark:from-black" />
-      </motion.div>
-
       {/* Badge */}
       <motion.div
         initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}

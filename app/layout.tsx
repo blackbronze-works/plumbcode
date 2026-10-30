@@ -3,7 +3,7 @@ import { Cabin } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import SmoothScroll from "@/components/SmoothScroll";
-import { ThemeProvider } from "@/components/ThemeProvider";
+import ThemeProvider from "@/components/ThemeProvider";
 
 const cabin = Cabin({ subsets: ["latin"], variable: "--font-sans" });
 

@@ -1,3 +1,4 @@
+import Header from "@/components/home/Header";
 import Hero from "@/components/home/Hero";
 import Stats from "@/components/home/Stats";
 import Problem from "@/components/home/Problem";
@@ -11,7 +12,8 @@ import Footer from "@/components/home/Footer";
 
 const Page = () => {
   return (
-    <div>
+    <>
+      <Header />
       <Hero />
       <Stats />
       <Problem />
@@ -22,7 +24,7 @@ const Page = () => {
       <FAQ />
       <CTA />
       <Footer />
-    </div>
+    </>
   );
 };
 
