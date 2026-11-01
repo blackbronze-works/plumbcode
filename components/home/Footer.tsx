@@ -43,14 +43,18 @@ const Footer = () => {
                 alt="Plumbcode"
                 width={140}
                 height={32}
-                className="h-9 w-auto dark:hidden"
+                className="dark:hidden"
+                style={{ height: 36, width: "auto" }}
+                sizes="140px"
               />
               <Image
                 src="/img/plumbcode-white.png"
                 alt="Plumbcode"
                 width={140}
                 height={32}
-                className="hidden h-9 w-auto dark:block"
+                className="hidden dark:block"
+                style={{ height: 36, width: "auto" }}
+                sizes="140px"
               />
             </Link>
             <p className="mt-4 max-w-xs font-sans text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">

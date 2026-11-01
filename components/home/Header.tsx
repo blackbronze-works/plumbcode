@@ -2,13 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useSyncExternalStore, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Loader2, LogOut, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 // import ThemeToggle from "../ThemeToggle";
 import { Button } from "../ui/button";
 import { GithubIcon } from "../GithubIcon";
+import { authClient } from "@/lib/auth-client";
 
 const NAV = [
   { label: "Product", href: "#product" },
@@ -27,7 +29,23 @@ const getScrolled = () =>
 const getServerScrolled = () => false;
 
 const Header = () => {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+  const { data: session } = authClient.useSession();
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
+
+    try {
+      await authClient.signOut();
+      setOpen(false);
+      router.push("/");
+      router.refresh();
+    } finally {
+      setSigningOut(false);
+    }
+  };
 
   const scrolled = useSyncExternalStore(
     subscribeToScroll,
@@ -74,7 +92,9 @@ const Header = () => {
               width={140}
               height={32}
               priority
-              className="h-10 w-auto dark:hidden"
+              className="dark:hidden"
+              style={{ height: 40, width: "auto" }}
+              sizes="140px"
             />
             <Image
               src="/img/plumbcode-white.png"
@@ -82,7 +102,9 @@ const Header = () => {
               width={140}
               height={32}
               priority
-              className="hidden h-10 w-auto dark:block"
+              className="hidden dark:block"
+              style={{ height: 40, width: "auto" }}
+              sizes="140px"
             />
           </Link>
         </div>
@@ -104,14 +126,44 @@ const Header = () => {
         <div className="col-span-2 flex items-center justify-end gap-2 md:col-span-1">
           {/* <ThemeToggle /> */}
 
-          <Button
-            nativeButton={false}
-            render={<Link href="/login" />}
-            variant="ghost"
-            className="hidden h-auto px-3 py-2 text-sm text-neutral-700 transition-colors hover:text-neutral-950 dark:text-neutral-300 dark:hover:text-white sm:inline-block"
-          >
-            Sign in
-          </Button>
+          {session ? (
+            <>
+              <Button
+                nativeButton={false}
+                render={<Link href="/dashboard" />}
+                variant="ghost"
+                className="hidden h-auto max-w-40 px-3 py-2 text-sm text-neutral-700 transition-colors hover:text-neutral-950 dark:text-neutral-300 dark:hover:text-white sm:inline-block"
+              >
+                <span className="truncate">{session.user.name}</span>
+              </Button>
+
+              <Button
+                type="button"
+                onClick={handleSignOut}
+                disabled={signingOut}
+                variant="ghost"
+                size="icon"
+                aria-label="Sign out"
+                title="Sign out"
+                className="hidden h-9 w-9 rounded-full text-neutral-700 hover:bg-neutral-900/5 dark:text-neutral-300 dark:hover:bg-white/10 sm:inline-flex"
+              >
+                {signingOut ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <LogOut size={16} />
+                )}
+              </Button>
+            </>
+          ) : (
+            <Button
+              nativeButton={false}
+              render={<Link href="/login" />}
+              variant="ghost"
+              className="hidden h-auto px-3 py-2 text-sm text-neutral-700 transition-colors hover:text-neutral-950 dark:text-neutral-300 dark:hover:text-white sm:inline-block"
+            >
+              Sign in
+            </Button>
+          )}
 
           <Button
             nativeButton={false}
@@ -164,14 +216,18 @@ const Header = () => {
                     alt="Plumbcode"
                     width={140}
                     height={32}
-                    className="h-8 w-auto dark:hidden"
+                    className="dark:hidden"
+                    style={{ height: 32, width: "auto" }}
+                    sizes="140px"
                   />
                   <Image
                     src="/img/plumbcode-white.png"
                     alt="Plumbcode"
                     width={140}
                     height={32}
-                    className="hidden h-8 w-auto dark:block"
+                    className="hidden dark:block"
+                    style={{ height: 32, width: "auto" }}
+                    sizes="140px"
                   />
                 </Link>
                 <Button
@@ -197,14 +253,48 @@ const Header = () => {
                 ))}
               </nav>
               <div className="mt-auto flex flex-col gap-2 border-t border-neutral-200 pt-4 dark:border-neutral-800">
-                <Button
-                  render={<Link href="/login" onClick={() => setOpen(false)} />}
-                  variant="outline"
-                  nativeButton={false}
-                  className="h-auto rounded-full border-neutral-300 px-4 py-2 text-center text-sm font-medium text-neutral-800 transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-900"
-                >
-                  Sign in
-                </Button>
+                {session ? (
+                  <>
+                    <Button
+                      render={
+                        <Link
+                          href="/dashboard"
+                          onClick={() => setOpen(false)}
+                        />
+                      }
+                      variant="outline"
+                      nativeButton={false}
+                      className="h-auto rounded-full border-neutral-300 px-4 py-2 text-center text-sm font-medium text-neutral-800 transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-900"
+                    >
+                      <span className="truncate">{session.user.name}</span>
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={handleSignOut}
+                      disabled={signingOut}
+                      variant="outline"
+                      className="h-auto gap-2 rounded-full border-neutral-300 px-4 py-2 text-center text-sm font-medium text-neutral-800 transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-900"
+                    >
+                      {signingOut ? (
+                        <Loader2 size={18} className="animate-spin" />
+                      ) : (
+                        <LogOut size={18} />
+                      )}
+                      Sign out
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    render={
+                      <Link href="/login" onClick={() => setOpen(false)} />
+                    }
+                    variant="outline"
+                    nativeButton={false}
+                    className="h-auto rounded-full border-neutral-300 px-4 py-2 text-center text-sm font-medium text-neutral-800 transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-900"
+                  >
+                    Sign in
+                  </Button>
+                )}
                 <Button
                   render={
                     <Link href="/install" onClick={() => setOpen(false)} />

@@ -1,8 +1,9 @@
 "use client";
 
-import { forwardRef, useId, useState } from "react";
+import { forwardRef, useEffect, useId, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,6 +11,7 @@ import { z } from "zod";
 import { ArrowLeft, Eye, EyeOff, Loader2 } from "lucide-react";
 import { GithubIcon } from "@/components/GithubIcon";
 import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/auth-client";
 
 /* ---------- Schemas ---------- */
 
@@ -108,12 +110,56 @@ const Field = forwardRef<HTMLInputElement, FieldProps>(function Field(
 const primaryBtn =
   "h-auto w-full gap-2 rounded-full bg-neutral-950 px-6 py-3 font-sans text-sm font-medium text-white transition-colors hover:bg-neutral-800 disabled:opacity-60 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200";
 
+/* ---------- OAuth error messages ---------- */
+
+const authErrorMessages: Record<string, string> = {
+  access_denied: "GitHub sign-in was cancelled.",
+  account_not_linked:
+    "An account with this email already exists. Sign in with your email and password first.",
+  email_not_found:
+    "GitHub didn't share a verified email address. Add a verified email to your GitHub account and try again.",
+  email_not_verified: "Your GitHub email address isn't verified.",
+  invalid_code: "The GitHub sign-in code expired. Please try again.",
+  no_code: "GitHub didn't return a sign-in code. Please try again.",
+  state_mismatch:
+    "Your GitHub sign-in session expired. Close this tab and start again.",
+  state_not_found:
+    "Your GitHub sign-in session expired. Close this tab and start again.",
+  unable_to_get_user_info:
+    "Couldn't read your GitHub profile. Please try again.",
+  unable_to_link_account:
+    "Couldn't connect GitHub to your existing account. Please try again.",
+  oauth_provider_not_found:
+    "GitHub sign-in isn't configured correctly on the server.",
+  email_does_not_match:
+    "Your GitHub email doesn't match the email on your existing account.",
+};
+
+const authErrorMessage = (code: string) =>
+  authErrorMessages[code] ??
+  `GitHub sign-in failed (${code}). Please try again.`;
+
 /* ---------- Page ---------- */
 
 export default function AuthPage() {
+  const router = useRouter();
   const [tab, setTab] = useState<"login" | "signup">("login");
   const [serverError, setServerError] = useState<string | null>(null);
   const [githubLoading, setGithubLoading] = useState(false);
+
+  // Better Auth redirects OAuth failures to /login?error=<code>.
+  useEffect(() => {
+    const code = new URLSearchParams(window.location.search).get("error");
+
+    if (!code) return;
+
+    const message = authErrorMessage(code);
+    window.history.replaceState({}, "", window.location.pathname);
+
+    // Defer the state update so it happens after the effect completes.
+    const timer = window.setTimeout(() => setServerError(message), 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const loginForm = useForm<LoginData>({ resolver: zodResolver(loginSchema) });
   const signupForm = useForm<SignupData>({
@@ -125,13 +171,23 @@ export default function AuthPage() {
     setServerError(null);
   };
 
-  /* TODO: replace these three with your real auth calls. */
   const handleGithub = async () => {
     setServerError(null);
     setGithubLoading(true);
+
     try {
-      // e.g. signIn("github", { callbackUrl: "/dashboard" })
-      console.log("github sign-in");
+      const { error } = await authClient.signIn.social({
+        provider: "github",
+        callbackURL: "/dashboard",
+      });
+
+      if (error) {
+        setServerError(
+          error.message ?? "Couldn't connect to GitHub. Please try again.",
+        );
+        setGithubLoading(false);
+      }
+      // On success Better Auth redirects the browser to GitHub.
     } catch {
       setServerError("Couldn't connect to GitHub. Please try again.");
       setGithubLoading(false);
@@ -140,17 +196,52 @@ export default function AuthPage() {
 
   const handleLogin = async (data: LoginData) => {
     setServerError(null);
+
     try {
-      console.log("login", data);
+      const { error } = await authClient.signIn.email({
+        email: data.email,
+        password: data.password,
+      });
+
+      if (error) {
+        setServerError(
+          error.code === "INVALID_EMAIL_OR_PASSWORD"
+            ? "Incorrect email or password."
+            : (error.message ?? "Something went wrong. Please try again."),
+        );
+        return;
+      }
+
+      router.push("/dashboard");
+      router.refresh();
     } catch {
-      setServerError("Incorrect email or password.");
+      setServerError("Something went wrong. Please try again.");
     }
   };
 
   const handleSignup = async (data: SignupData) => {
     setServerError(null);
+
     try {
-      console.log("signup", data);
+      const { error } = await authClient.signUp.email({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      });
+
+      if (error) {
+        setServerError(
+          error.code === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL" ||
+            error.code === "USER_ALREADY_EXISTS"
+            ? "That email is already registered. Try signing in instead."
+            : (error.message ??
+                "Couldn't create your account. Please try again."),
+        );
+        return;
+      }
+
+      router.push("/dashboard");
+      router.refresh();
     } catch {
       setServerError("Couldn't create your account. Please try again.");
     }
@@ -174,7 +265,7 @@ export default function AuthPage() {
         className="w-full max-w-md lg:max-w-4xl"
       >
         {/* Card: column on mobile, row on desktop */}
-        <div className="flex flex-col rounded-2xl border border-neutral-200 bg-white/70 p-6 shadow-2xl shadow-neutral-900/10 dark:border-white/10 dark:bg-neutral-950/70 dark:shadow-black/60 sm:p-8 lg:flex-row lg:p-0">
+        <div className="flex flex-col rounded-2xl border border-neutral-200 bg-white/50 p-6 shadow-2xl shadow-neutral-900/10 dark:border-white/10 dark:bg-neutral-950/30 dark:shadow-black/60 sm:p-8 lg:flex-row lg:p-0">
           {/* ---------- Left: logo, heading, GitHub ---------- */}
           <div className="flex flex-col items-center text-center lg:w-1/2 lg:items-start lg:p-12 lg:text-left">
             <Image
@@ -183,7 +274,9 @@ export default function AuthPage() {
               width={140}
               height={32}
               priority
-              className="h-8 w-auto dark:hidden"
+              className="dark:hidden"
+              style={{ height: 32, width: "auto" }}
+              sizes="140px"
             />
             <Image
               src="/img/plumbcode-white.png"
@@ -191,7 +284,9 @@ export default function AuthPage() {
               width={140}
               height={32}
               priority
-              className="hidden h-8 w-auto dark:block"
+              className="hidden dark:block"
+              style={{ height: 32, width: "auto" }}
+              sizes="140px"
             />
 
             {/* On desktop this block sits at the bottom of the column */}

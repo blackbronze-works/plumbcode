@@ -40,7 +40,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+skills-lock.json
 .claude
 .kilo
 .opencode
 .agents
+.windsurf
+/lib/generated/prisma
