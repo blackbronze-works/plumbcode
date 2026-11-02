@@ -26,20 +26,20 @@ export default function Sidebar({ userName, userEmail }: { userName: string; use
       <div className="flex items-center gap-2 px-4 py-6">
         <Link href="/" aria-label="Plumbcode home">
           <Image
-            src="/img/plumbcode-black.png"
+            src="/img/plumbcode-black.jpg"
             alt="Plumbcode"
             width={120}
             height={28}
-            className="dark:hidden"
+            className="rounded-sm dark:hidden"
             style={{ width: "auto", height: 28 }}
             sizes="120px"
           />
           <Image
-            src="/img/plumbcode-white.png"
+            src="/img/plumbcode-white.jpg"
             alt="Plumbcode"
             width={120}
             height={28}
-            className="hidden dark:block"
+            className="hidden rounded-sm dark:block"
             style={{ width: "auto", height: 28 }}
             sizes="120px"
           />
