@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { auth } from "@/lib/auth";
-import SignoutButton from "@/components/SignoutButton";
+import DashboardShell from "@/components/dashboard/DashboardShell";
 
 export const metadata = {
   title: "Dashboard — Plumbcode",
@@ -13,19 +13,19 @@ export const metadata = {
 
 export default function DashboardPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 py-24">
-      <Suspense
-        fallback={
+    <Suspense
+      fallback={
+        <div className="flex h-screen items-center justify-center">
           <Loader2
             size={24}
             className="animate-spin text-neutral-500"
             aria-label="Loading dashboard"
           />
-        }
-      >
-        <DashboardContent />
-      </Suspense>
-    </main>
+        </div>
+      }
+    >
+      <DashboardContent />
+    </Suspense>
   );
 }
 
@@ -35,7 +35,7 @@ async function DashboardContent() {
   if (!session) redirect("/login");
 
   return (
-    <div className="w-full max-w-lg rounded-2xl border border-neutral-200 bg-white/50 p-8 shadow-2xl shadow-neutral-900/10 dark:border-white/10 dark:bg-neutral-950/30 dark:shadow-black/60">
+    <DashboardShell userName={session.user.name} userEmail={session.user.email}>
       <Link href="/" aria-label="Plumbcode home" className="inline-flex">
         <Image
           src="/img/plumbcode-black.png"
@@ -69,16 +69,6 @@ async function DashboardContent() {
         </span>
         .
       </p>
-
-      <div className="mt-8 flex flex-wrap items-center gap-3">
-        <SignoutButton />
-        <Link
-          href="/"
-          className="font-sans text-sm text-neutral-600 underline-offset-4 transition-colors hover:text-neutral-950 hover:underline dark:text-neutral-400 dark:hover:text-white"
-        >
-          Back to home
-        </Link>
-      </div>
-    </div>
+    </DashboardShell>
   );
 }
