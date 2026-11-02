@@ -57,6 +57,11 @@ export type Session = Prisma.SessionModel
  */
 export type Account = Prisma.AccountModel
 /**
+ * Model Installation
+ * 
+ */
+export type Installation = Prisma.InstallationModel
+/**
  * Model Verification
  * 
  */
