@@ -4,13 +4,15 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  ChevronsLeftRight,
   ChevronUp,
   GitBranch,
   Home,
   LogOut,
   Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
   Settings,
   Sparkles,
   X,
@@ -18,6 +20,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
+import { Button } from "../ui/button";
 
 // ─── Nav config ──────────────────────────────────────────────────────────────
 
@@ -208,14 +211,14 @@ export default function Sidebar({
           </Link>
 
           {!collapsed && (
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="icon-lg"
               onClick={toggleCollapse}
               aria-label="Collapse sidebar"
-              className="hidden size-9 flex-center shrink-0 rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-950 md:flex dark:hover:bg-white/5 dark:hover:text-white"
             >
-              <ChevronsLeftRight size={16} />
-            </button>
+              <PanelLeftOpen size={18} strokeWidth={2.5} />
+            </Button>
           )}
         </div>
 
@@ -223,11 +226,19 @@ export default function Sidebar({
         <nav aria-label="Dashboard" className="flex flex-col gap-1 p-2">
           {/* Workspace label + line — label hides when collapsed, row height stays constant */}
           <div className="mb-1 flex h-4 items-center gap-2">
-            {!collapsed && (
-              <span className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400">
-                Workspace
-              </span>
-            )}
+            <AnimatePresence initial={false}>
+              {!collapsed && (
+                <motion.span
+                  initial={{ opacity: 0, x: -4 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -4 }}
+                  transition={{ duration: 0.18, ease: "easeOut" }}
+                  className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400 whitespace-nowrap"
+                >
+                  Workspace
+                </motion.span>
+              )}
+            </AnimatePresence>
             <span className="h-px flex-1 bg-neutral-200 dark:bg-white/10" />
           </div>
 
@@ -242,7 +253,7 @@ export default function Sidebar({
                 onClick={closeMobile}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "group relative flex h-9 shrink-0 items-center rounded-md text-sm font-medium transition-colors",
+                  "group relative flex h-9 shrink-0 items-center rounded-md text-sm font-medium transition-colors overflow-hidden",
                   !collapsed && "gap-3 pr-2",
                   active
                     ? "bg-neutral-200/70 text-neutral-950 dark:bg-white/10 dark:text-white"
@@ -254,9 +265,18 @@ export default function Sidebar({
                   <Icon size={20} strokeWidth={active ? 2.5 : 2} />
                 </span>
 
-                {!collapsed && (
-                  <span className="min-w-0 truncate">{item.label}</span>
-                )}
+                <AnimatePresence initial={false}>
+                  {!collapsed && (
+                    <motion.span
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.18, ease: "easeOut" }}
+                      className="min-w-0 truncate"
+                    >
+                      {item.label}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
 
                 {/* Collapsed tooltip */}
                 {collapsed && (
@@ -272,33 +292,48 @@ export default function Sidebar({
         <div className="flex-1" />
 
         {/* Expand sidebar (collapsed only) */}
-        {collapsed && (
-          <div className="p-2">
-            <button
-              type="button"
-              onClick={toggleCollapse}
-              aria-label="Expand sidebar"
-              className="group relative h-9 w-full flex-center rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-950 dark:hover:bg-white/5 dark:hover:text-white"
+        <AnimatePresence initial={false}>
+          {collapsed && (
+            <motion.div
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 4 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
+              className="p-2"
             >
-              <ChevronsLeftRight size={16} />
-              <span className="pointer-events-none absolute left-full top-1/2 z-50 ml-3 -translate-y-1/2 whitespace-nowrap rounded-lg bg-neutral-950 px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 dark:bg-white dark:text-neutral-950">
-                Expand
-              </span>
-            </button>
-          </div>
-        )}
+              <Button
+                variant="ghost"
+                size="icon-lg"
+                onClick={toggleCollapse}
+                aria-label="Collapse sidebar"
+              >
+                <PanelLeftClose size={18} strokeWidth={2.5} />
+                <span className="pointer-events-none absolute left-full top-1/2 z-50 ml-3 -translate-y-1/2 whitespace-nowrap rounded-lg bg-neutral-950 px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 dark:bg-white dark:text-neutral-950">
+                  Expand
+                </span>
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
         {/* Early access (expanded only) */}
-        {!collapsed && (
-          <div className="mx-2 mb-2 rounded-xl border border-neutral-200/80 bg-neutral-50/80 p-3 dark:border-white/10 dark:bg-white/5">
-            <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-neutral-500">
-              <Sparkles size={12} />
-              Early access
-            </p>
-            <p className="mt-1.5 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
-              Plumbcode is taking shape — new pages ship weekly.
-            </p>
-          </div>
-        )}
+        <AnimatePresence initial={false}>
+          {!collapsed && (
+            <motion.div
+              initial={{ opacity: 0, y: 8, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="mx-2 mb-2 rounded-xl border border-neutral-200/80 bg-neutral-50/80 p-3 dark:border-white/10 dark:bg-white/5"
+            >
+              <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-neutral-500">
+                <Sparkles size={12} />
+                Early access
+              </p>
+              <p className="mt-1.5 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
+                Plumbcode is taking shape — new pages ship weekly.
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Profile */}
         <div
@@ -338,32 +373,42 @@ export default function Sidebar({
             onClick={() => setProfileOpen((v) => !v)}
             aria-expanded={profileOpen}
             className={cn(
-              "flex flex-1 items-center rounded-md text-left transition-colors hover:bg-neutral-100 dark:hover:bg-white/5 p-1 gap-1",
+              "flex flex-1 items-center rounded-md text-left transition-colors hover:bg-neutral-100 dark:hover:bg-white/5 p-1 gap-2 overflow-hidden",
             )}
           >
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-neutral-600 to-neutral-950 text-sm font-semibold text-white ring-2 ring-white dark:from-neutral-300 dark:to-neutral-500 dark:text-neutral-950 dark:ring-neutral-900">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-neutral-600 to-neutral-950 text-sm font-semibold text-white ring-2 ring-white dark:from-neutral-300 dark:to-neutral-500 dark:text-neutral-950 dark:ring-neutral-900">
               {userName.charAt(0).toUpperCase() || "?"}
             </span>
 
-            {!collapsed && (
-              <>
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-medium text-neutral-950 dark:text-white">
-                    {userName}
+            <AnimatePresence initial={false}>
+              {!collapsed && (
+                <motion.span
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -8 }}
+                  transition={{ duration: 0.18, ease: "easeOut" }}
+                  className="min-w-0 flex-1 flex items-center gap-1"
+                >
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-medium text-neutral-950 dark:text-white">
+                      {userName}
+                    </span>
+                    <span className="block truncate text-xs text-neutral-500">
+                      {userEmail}
+                    </span>
                   </span>
-                  <span className="block truncate text-xs text-neutral-500">
-                    {userEmail}
-                  </span>
-                </span>
-                <ChevronUp
-                  size={16}
-                  className={cn(
-                    "shrink-0 text-neutral-400 transition-transform",
-                    profileOpen && "rotate-180",
-                  )}
-                />
-              </>
-            )}
+                  <div className="size-6 flex-center">
+                    <ChevronUp
+                      size={18}
+                      className={cn(
+                        "shrink-0 text-neutral-400 transition-transform",
+                        profileOpen && "rotate-180",
+                      )}
+                    />
+                  </div>
+                </motion.span>
+              )}
+            </AnimatePresence>
           </button>
         </div>
       </aside>
