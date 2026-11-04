@@ -211,14 +211,21 @@ export default function Sidebar({
           </Link>
 
           {!collapsed && (
-            <Button
-              variant="ghost"
-              size="icon-lg"
-              onClick={toggleCollapse}
-              aria-label="Collapse sidebar"
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, transition: { duration: 0 } }}
+              transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
             >
-              <PanelLeftOpen size={18} strokeWidth={2.5} />
-            </Button>
+              <Button
+                variant="ghost"
+                size="icon-lg"
+                onClick={toggleCollapse}
+                aria-label="Collapse sidebar"
+              >
+                <PanelLeftOpen size={18} strokeWidth={2.5} />
+              </Button>
+            </motion.div>
           )}
         </div>
 
@@ -297,39 +304,47 @@ export default function Sidebar({
             <motion.div
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 4 }}
               transition={{ duration: 0.18, ease: "easeOut" }}
               className="p-2"
             >
-              <Button
-                variant="ghost"
-                size="icon-lg"
-                onClick={toggleCollapse}
-                aria-label="Collapse sidebar"
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0, transition: { duration: 0 } }}
+                transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
+                className="w-full"
               >
-                <PanelLeftClose size={18} strokeWidth={2.5} />
-                <span className="pointer-events-none absolute left-full top-1/2 z-50 ml-3 -translate-y-1/2 whitespace-nowrap rounded-lg bg-neutral-950 px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 dark:bg-white dark:text-neutral-950">
-                  Expand
-                </span>
-              </Button>
+                <Button
+                  variant="ghost"
+                  size="icon-lg"
+                  onClick={toggleCollapse}
+                  aria-label="Collapse sidebar"
+                >
+                  <PanelLeftClose size={18} strokeWidth={2.5} />
+                  <span className="pointer-events-none absolute left-full top-1/2 z-50 ml-3 -translate-y-1/2 whitespace-nowrap rounded-lg bg-neutral-950 px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 dark:bg-white dark:text-neutral-950">
+                    Expand
+                  </span>
+                </Button>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
         {/* Early access (expanded only) */}
-        <AnimatePresence initial={false}>
+        <AnimatePresence mode="wait" initial={false}>
           {!collapsed && (
             <motion.div
-              initial={{ opacity: 0, y: 8, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, transition: { duration: 0 } }}
+              transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
               className="mx-2 mb-2 rounded-xl border border-neutral-200/80 bg-neutral-50/80 p-3 dark:border-white/10 dark:bg-white/5"
             >
               <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-neutral-500">
-                <Sparkles size={12} />
+                <Sparkles size={12} className="text-brand" />
                 Early access
               </p>
               <p className="mt-1.5 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
-                Plumbcode is taking shape — new pages ship weekly.
+                Plumbcode is taking shape — new features ship consistently.
               </p>
             </motion.div>
           )}
