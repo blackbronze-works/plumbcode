@@ -75,7 +75,7 @@ const Field = forwardRef<HTMLInputElement, FieldProps>(function Field(
           } ${
             error
               ? "border-red-500 focus:ring-red-500/20"
-              : "border-neutral-300 focus:border-neutral-950 focus:ring-neutral-950/10 dark:border-white/10 dark:focus:border-white dark:focus:ring-white/10"
+              : "border-neutral-300 focus:border-brand focus:ring-brand/20 dark:border-white/10 dark:focus:border-brand dark:focus:ring-brand/25"
           }`}
           {...props}
         />
@@ -85,7 +85,7 @@ const Field = forwardRef<HTMLInputElement, FieldProps>(function Field(
             type="button"
             onClick={() => setShow((v) => !v)}
             aria-label={show ? "Hide password" : "Show password"}
-            className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-neutral-500 transition-colors hover:text-neutral-950 dark:hover:text-white"
+            className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-neutral-500 transition-colors hover:text-brand"
           >
             {show ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
@@ -108,7 +108,7 @@ const Field = forwardRef<HTMLInputElement, FieldProps>(function Field(
 /* ---------- Shared button styles ---------- */
 
 const primaryBtn =
-  "h-auto w-full gap-2 rounded-full bg-neutral-950 px-6 py-3 font-sans text-sm font-medium text-white transition-colors hover:bg-neutral-800 disabled:opacity-60 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200";
+  "brand-glow h-auto w-full gap-2 rounded-full bg-brand px-6 py-3 font-sans text-sm font-medium text-brand-foreground transition-colors hover:bg-brand/90 disabled:opacity-60";
 
 /* ---------- OAuth error messages ---------- */
 
@@ -252,7 +252,7 @@ export default function AuthPage() {
       {/* Back link */}
       <Link
         href="/"
-        className="absolute left-4 top-6 inline-flex items-center gap-2 font-sans text-sm text-neutral-600 transition-colors hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white sm:left-8"
+        className="absolute left-4 top-6 inline-flex items-center gap-2 font-sans text-sm text-neutral-600 transition-colors hover:text-brand dark:text-neutral-400 sm:left-8"
       >
         <ArrowLeft size={16} />
         Back to home
@@ -265,9 +265,15 @@ export default function AuthPage() {
         className="w-full max-w-md lg:max-w-4xl"
       >
         {/* Card: column on mobile, row on desktop */}
-        <div className="flex flex-col rounded-2xl border border-neutral-200 bg-white/50 p-6 shadow-2xl shadow-neutral-900/10 dark:border-white/10 dark:bg-neutral-950/30 dark:shadow-black/60 sm:p-8 lg:flex-row lg:p-0">
-          {/* ---------- Left: logo, heading, GitHub ---------- */}
-          <div className="flex flex-col items-center text-center lg:w-1/2 lg:items-start lg:p-12 lg:text-left">
+        <div className="relative flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white/90 p-6 shadow-[0_40px_120px_-60px_var(--brand-glow)] dark:border-white/10 dark:bg-neutral-950/85 sm:p-8 lg:flex-row lg:p-0">
+          {/* Brand hairline */}
+          <div
+            aria-hidden
+            className="absolute inset-x-0 top-0 z-10 h-px bg-linear-to-r from-transparent via-brand/60 to-transparent"
+          />
+
+          {/* ---------- Left: brand gradient panel (logo, heading, GitHub) ---------- */}
+          <div className="flex flex-col items-center rounded-xl bg-linear-to-br from-brand-soft to-brand/10 p-5 text-center sm:p-8 lg:w-1/2 lg:items-start lg:rounded-none lg:p-12 lg:text-left">
             <Image
               src="/img/plumbcode-black.png"
               alt="Plumbcode"
@@ -291,47 +297,54 @@ export default function AuthPage() {
 
             {/* On desktop this block sits at the bottom of the column */}
             <div className="mt-6 flex w-full flex-col items-center lg:mt-auto lg:items-start lg:pt-24">
-              <h1 className="font-barabara text-2xl tracking-tight text-neutral-950 dark:text-white lg:text-4xl lg:leading-[1.1]">
+              <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-brand">
+                Secure access
+              </p>
+              <h1 className="font-barabara mt-3 text-2xl tracking-tight text-neutral-950 dark:text-white lg:text-4xl lg:leading-[1.1]">
                 {tab === "login" ? "Welcome back" : "Create your account"}
               </h1>
-              <p className="mt-2 font-sans text-sm text-neutral-600 dark:text-neutral-400 lg:mt-4 lg:max-w-xs lg:text-base lg:leading-relaxed">
+              <p className="mt-2 font-sans text-sm text-neutral-600 dark:text-neutral-300 lg:mt-4 lg:max-w-xs lg:text-base lg:leading-relaxed">
                 {tab === "login"
                   ? "Sign in to manage your repositories and principles."
                   : "Set up Plumbcode for your team in a few minutes."}
               </p>
 
-              {/* GitHub (primary) */}
-              <Button
-                type="button"
-                onClick={handleGithub}
-                disabled={githubLoading}
-                className={`mt-6 lg:mt-8 ${primaryBtn}`}
-              >
-                {githubLoading ? (
-                  <Loader2 size={16} className="animate-spin" />
-                ) : (
-                  <GithubIcon size={16} />
-                )}
-                Continue with GitHub
-              </Button>
+              <div className="mt-5 flex flex-wrap justify-center gap-2 lg:justify-start">
+                <span className="rounded-full border border-brand/25 bg-brand/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-brand">
+                  Minimal permissions
+                </span>
+                <span className="rounded-full border border-brand/25 bg-brand/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-brand">
+                  Advisory by default
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* ---------- Right: email forms ---------- */}
+          {/* ---------- Right: GitHub, then email forms ---------- */}
           <div className="lg:flex lg:w-1/2 lg:flex-col lg:justify-center lg:border-l lg:border-neutral-200 lg:p-12 dark:lg:border-white/10">
-            {/* Divider (mobile only) */}
-            <div className="my-6 flex items-center gap-4 lg:hidden">
+            {/* GitHub (primary) */}
+            <Button
+              type="button"
+              onClick={handleGithub}
+              disabled={githubLoading}
+              className={primaryBtn}
+            >
+              {githubLoading ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <GithubIcon size={16} />
+              )}
+              Continue with GitHub
+            </Button>
+
+            {/* Divider */}
+            <div className="my-6 flex items-center gap-4">
               <span className="h-px flex-1 bg-neutral-200 dark:bg-white/10" />
               <span className="font-sans text-xs text-neutral-500">
                 or use email
               </span>
               <span className="h-px flex-1 bg-neutral-200 dark:bg-white/10" />
             </div>
-
-            {/* Label (desktop only) */}
-            <p className="mb-4 hidden font-sans text-xs font-medium uppercase tracking-widest text-neutral-500 lg:block">
-              Or use email
-            </p>
 
             {/* Tabs */}
             <div
@@ -348,8 +361,8 @@ export default function AuthPage() {
                   onClick={() => switchTab(t)}
                   className={`flex-1 rounded-full px-4 py-2 font-sans text-sm transition-colors ${
                     tab === t
-                      ? "bg-neutral-950 text-white dark:bg-white dark:text-neutral-950"
-                      : "text-neutral-600 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
+                      ? "bg-brand text-brand-foreground"
+                      : "text-neutral-600 hover:text-brand dark:text-neutral-400 dark:hover:text-brand"
                   }`}
                 >
                   {t === "login" ? "Login" : "Sign up"}
@@ -398,7 +411,7 @@ export default function AuthPage() {
                       action={
                         <Link
                           href="/forgot-password"
-                          className="font-sans text-xs text-neutral-500 underline-offset-4 hover:text-neutral-950 hover:underline dark:hover:text-white"
+                          className="font-sans text-xs text-neutral-500 underline-offset-4 transition-colors hover:text-brand hover:underline dark:text-neutral-400 dark:hover:text-brand"
                         >
                           Forgot password?
                         </Link>
@@ -482,14 +495,14 @@ export default function AuthPage() {
           By continuing you agree to our{" "}
           <Link
             href="/terms"
-            className="underline underline-offset-4 hover:text-neutral-950 dark:hover:text-white"
+            className="underline underline-offset-4 transition-colors hover:text-brand"
           >
             Terms
           </Link>{" "}
           and{" "}
           <Link
             href="/privacy"
-            className="underline underline-offset-4 hover:text-neutral-950 dark:hover:text-white"
+            className="underline underline-offset-4 transition-colors hover:text-brand"
           >
             Privacy Policy
           </Link>

@@ -32,7 +32,19 @@ const COLUMNS = [
 
 const Footer = () => {
   return (
-    <footer className="border-t border-neutral-200 px-4 py-16 dark:border-white/10 sm:px-6">
+    <footer className="relative isolate overflow-hidden border-t border-neutral-200 px-4 py-16 dark:border-white/10 sm:px-6">
+      <span
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-brand/35 to-transparent"
+      />
+      {/* Ghost wordmark */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 -bottom-[2vw] -z-10 select-none text-center font-barabara text-[15vw] leading-none tracking-tight text-brand/10 dark:text-brand/10"
+      >
+        PLUMBCODE
+      </span>
+
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-12 md:grid-cols-5">
           {/* Brand */}
@@ -74,7 +86,7 @@ const Footer = () => {
                     <li key={link.label}>
                       <Link
                         href={link.href}
-                        className="font-sans text-sm text-neutral-700 transition-colors hover:text-neutral-950 dark:text-neutral-300 dark:hover:text-white"
+                        className="font-sans text-sm text-neutral-700 transition-colors hover:text-brand dark:text-neutral-300 dark:hover:text-brand"
                       >
                         {link.label}
                       </Link>
@@ -96,7 +108,7 @@ const Footer = () => {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Plumbcode on GitHub"
-            className="text-neutral-500 transition-colors hover:text-neutral-950 dark:hover:text-white"
+            className="text-neutral-500 transition-colors hover:text-brand"
           >
             <GithubIcon size={18} />
           </Link>

@@ -42,6 +42,16 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Brand: emerald / teal */
+  --brand: oklch(0.55 0.135 163);
+  --brand-foreground: oklch(0.985 0 0);
+  --brand-soft: oklch(0.965 0.028 163);
+  --brand-border: oklch(0.87 0.06 163);
+  --brand-glow: oklch(0.55 0.135 163 / 0.3);
+  --brand-gradient-from: oklch(0.5 0.13 163);
+  --brand-gradient-to: oklch(0.55 0.11 195);
+  --dot: oklch(0.145 0 0 / 0.1);
 }
 
 .dark {
@@ -76,6 +86,16 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  /* Brand: emerald / teal */
+  --brand: oklch(0.765 0.17 163);
+  --brand-foreground: oklch(0.145 0 0);
+  --brand-soft: oklch(0.28 0.05 163);
+  --brand-border: oklch(0.42 0.08 163);
+  --brand-glow: oklch(0.765 0.17 163 / 0.25);
+  --brand-gradient-from: oklch(0.82 0.16 163);
+  --brand-gradient-to: oklch(0.8 0.11 195);
+  --dot: oklch(0.985 0 0 / 0.11);
 }
 
 @theme inline {
@@ -112,6 +132,10 @@
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-border: var(--brand-border);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -136,6 +160,10 @@
   body {
     @apply bg-background text-foreground;
   }
+  ::selection {
+    background-color: color-mix(in oklab, var(--brand) 28%, transparent);
+    color: var(--foreground);
+  }
   html {
     @apply font-sans;
     scrollbar-width: thin;
@@ -153,10 +181,47 @@
     border-radius: 9999px;
   }
   *::-webkit-scrollbar-thumb:hover {
-    background-color: rgb(113 113 122);
+    background-color: color-mix(in oklab, var(--brand) 55%, rgb(82 82 91));
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
+  }
+}
+
+@layer utilities {
+  .text-brand-gradient {
+    background-image: linear-gradient(
+      100deg,
+      var(--brand-gradient-from) 0%,
+      var(--brand-gradient-to) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .dot-grid {
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      var(--dot) 1px,
+      transparent 0
+    );
+    background-size: 24px 24px;
+  }
+
+  .card-glow {
+    transition:
+      border-color 300ms ease,
+      box-shadow 300ms ease,
+      transform 300ms ease;
+  }
+  .card-glow:hover {
+    border-color: color-mix(in oklab, var(--brand) 38%, transparent);
+    box-shadow: 0 18px 50px -30px color-mix(in oklab, var(--brand) 60%, transparent);
+  }
+
+  .brand-glow {
+    box-shadow: 0 10px 40px -12px color-mix(in oklab, var(--brand) 55%, transparent);
   }
 }

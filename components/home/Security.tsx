@@ -118,8 +118,9 @@ const Security = () => {
           <motion.p
             {...reveal}
             transition={{ duration: 0.7 }}
-            className="font-sans text-xs font-medium uppercase tracking-widest text-neutral-500"
+            className="inline-flex items-center gap-2 rounded-full border border-brand-border bg-brand-soft/60 px-3 py-1 font-sans text-[11px] font-medium uppercase tracking-widest text-brand dark:bg-brand-soft/40"
           >
+            <span className="size-1 rounded-full bg-brand" />
             Security &amp; privacy
           </motion.p>
 
@@ -141,11 +142,11 @@ const Security = () => {
           </motion.p>
         </div>
 
-        {/* Data flow */}
+        {/* Data flow — the section's gradient card */}
         <motion.div
           {...reveal}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="mt-16 rounded-2xl border border-neutral-200 bg-white p-6 dark:border-white/10 dark:bg-neutral-950 sm:p-8"
+          className="mt-16 rounded-2xl border border-brand/30 bg-linear-to-br from-brand-soft to-brand/10 p-6 shadow-[0_24px_70px_-40px_var(--brand-glow)] dark:border-brand/25 sm:p-8"
         >
           <p className="font-sans text-xs font-medium uppercase tracking-widest text-neutral-500">
             What happens to a pull request
@@ -155,15 +156,15 @@ const Security = () => {
             {FLOW.map((step, i) => (
               <div key={step.title} className="relative">
                 <div className="flex items-center gap-3">
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-neutral-50 font-mono text-xs text-neutral-800 dark:border-white/10 dark:bg-neutral-900 dark:text-neutral-200">
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand font-mono text-xs text-brand-foreground">
                     {i === 0 ? <GithubIcon size={14} /> : i + 1}
                   </span>
                   {i < FLOW.length - 1 && (
                     <>
-                      <span className="hidden h-px flex-1 bg-neutral-200 dark:bg-white/10 md:block" />
+                      <span className="hidden h-px flex-1 bg-brand/30 md:block" />
                       <ArrowRight
                         size={14}
-                        className="hidden shrink-0 text-neutral-400 md:block"
+                        className="hidden shrink-0 text-brand/70 md:block"
                       />
                     </>
                   )}
@@ -176,7 +177,7 @@ const Security = () => {
                   {step.body}
                 </p>
                 {step.badge && (
-                  <span className="mt-3 inline-block rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 font-sans text-xs font-medium text-emerald-700 dark:text-emerald-400">
+                  <span className="mt-3 inline-block rounded-full border border-white/60 bg-white/70 px-2.5 py-1 font-sans text-xs font-medium text-neutral-800 dark:border-white/10 dark:bg-neutral-950/40 dark:text-white">
                     {step.badge}
                   </span>
                 )}
@@ -187,7 +188,7 @@ const Security = () => {
 
         {/* Permissions + commitments */}
         <div className="mt-4 grid gap-4 lg:grid-cols-5">
-          {/* Permissions table */}
+          {/* Permissions table — flat card */}
           <motion.div
             {...reveal}
             transition={{ duration: 0.8, delay: 0.1 }}
@@ -196,7 +197,7 @@ const Security = () => {
             <p className="font-sans text-xs font-medium uppercase tracking-widest text-neutral-500">
               GitHub permissions
             </p>
-            <h3 className="mt-3 font-barabara text-2xl leading-tight tracking-tight text-neutral-950 dark:text-white">
+            <h3 className="font-barabara mt-3 text-2xl leading-tight tracking-tight text-neutral-950 dark:text-white">
               Four scopes. That&rsquo;s all.
             </h3>
 
@@ -219,16 +220,16 @@ const Security = () => {
             </div>
           </motion.div>
 
-          {/* Commitments grid */}
+          {/* Commitments grid — flat cards with hover glow */}
           <div className="grid gap-4 sm:grid-cols-2 lg:col-span-3">
             {COMMITMENTS.map((item, i) => (
               <motion.div
                 key={item.title}
                 {...reveal}
                 transition={{ duration: 0.8, delay: 0.1 + i * 0.08 }}
-                className="rounded-2xl border border-neutral-200 bg-white p-6 dark:border-white/10 dark:bg-neutral-950"
+                className="card-glow rounded-2xl border border-neutral-200 bg-white p-6 dark:border-white/10 dark:bg-neutral-950"
               >
-                <div className="inline-flex size-9 items-center justify-center rounded-full border border-neutral-200 bg-neutral-50 text-neutral-800 dark:border-white/10 dark:bg-neutral-900 dark:text-neutral-200">
+                <div className="inline-flex size-9 items-center justify-center rounded-full border border-brand-border bg-brand-soft text-brand dark:bg-brand-soft/60">
                   <item.icon size={16} />
                 </div>
                 <h3 className="mt-4 font-sans text-base font-semibold tracking-tight text-neutral-950 dark:text-white">
@@ -242,7 +243,7 @@ const Security = () => {
           </div>
         </div>
 
-        {/* Roadmap */}
+        {/* Roadmap — flat card */}
         <motion.div
           {...reveal}
           transition={{ duration: 0.8, delay: 0.1 }}
@@ -264,7 +265,7 @@ const Security = () => {
                 className="inline-flex items-center gap-2 rounded-full border border-neutral-200 px-3 py-1.5 font-sans text-xs text-neutral-700 dark:border-white/10 dark:text-neutral-300"
               >
                 {r.label}
-                <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-neutral-500 dark:bg-neutral-900">
+                <span className="rounded-full bg-brand-soft px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-brand dark:bg-brand-soft/60">
                   {r.status}
                 </span>
               </span>

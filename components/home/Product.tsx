@@ -16,7 +16,7 @@ const reveal = {
   viewport: { once: true, margin: "-80px" },
 } as const;
 
-/* ---------- Mock views ---------- */
+/* ---------- Mock views (semantic color lives inside the imagery) ---------- */
 
 const RuleView = () => (
   <div className="space-y-4">
@@ -184,7 +184,7 @@ const HistoryView = () => (
           </div>
           <div className="mt-1.5 h-1.5 w-full rounded-full bg-neutral-100 dark:bg-neutral-900">
             <div
-              className="h-full rounded-full bg-neutral-950 dark:bg-white"
+              className="h-full rounded-full bg-brand"
               style={{ width: `${r.pct}%` }}
             />
           </div>
@@ -217,6 +217,7 @@ const TABS = [
   {
     id: "rules",
     icon: ScrollText,
+    label: "Rule-cited findings",
     title: "Findings that cite the rule",
     body: "Every finding points to the exact principle it came from and the exact lines of the diff. Developers can accept or dismiss it in seconds.",
     view: <RuleView />,
@@ -225,6 +226,7 @@ const TABS = [
   {
     id: "commits",
     icon: GitCommit,
+    label: "Commit vs. diff",
     title: "Commit messages that match the code",
     body: "Plumbcode compares what a commit says with what the diff actually does, and flags changes the message leaves out.",
     view: <CommitView />,
@@ -233,6 +235,7 @@ const TABS = [
   {
     id: "history",
     icon: History,
+    label: "Violation history",
     title: "Violation history per rule",
     body: "See which rules are broken most, how often findings are dismissed, and whether a rule is worth keeping or rewriting.",
     view: <HistoryView />,
@@ -245,16 +248,16 @@ const Product = () => {
   const current = TABS[active];
 
   return (
-    <section id="product" className="relative px-4 py-24 sm:px-6 sm:py-32">
+    <section id="product" className="px-4 py-24 sm:px-6 sm:py-32">
       <div className="mx-auto max-w-6xl">
         {/* Heading */}
         <div className="mx-auto max-w-3xl text-center">
           <motion.p
             {...reveal}
             transition={{ duration: 0.7 }}
-            className="font-sans text-xs font-medium uppercase tracking-widest text-neutral-500"
+            className="font-mono text-xs font-medium uppercase tracking-[0.2em] text-brand"
           >
-            The product
+            03 &middot; The product
           </motion.p>
 
           <motion.h2
@@ -275,76 +278,88 @@ const Product = () => {
           </motion.p>
         </div>
 
-        {/* Showcase */}
+        {/* Segmented pills */}
         <motion.div
           {...reveal}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="mt-16 grid gap-8 lg:grid-cols-5 lg:gap-12"
+          className="mt-12 flex flex-wrap items-center justify-center gap-2"
         >
-          {/* Tab list */}
-          <div className="flex flex-col gap-3 lg:col-span-2">
-            {TABS.map((tab, i) => {
-              const isActive = i === active;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActive(i)}
-                  aria-pressed={isActive}
-                  className={`rounded-2xl border p-5 text-left transition-colors ${
-                    isActive
-                      ? "border-neutral-950 bg-white dark:border-white dark:bg-neutral-950"
-                      : "border-neutral-200 bg-white hover:border-neutral-300 dark:border-white/10 dark:bg-neutral-950 dark:hover:border-white/20"
-                  }`}
+          {TABS.map((tab, i) => {
+            const isActive = i === active;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActive(i)}
+                aria-pressed={isActive}
+                className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 font-sans text-sm transition-colors ${
+                  isActive
+                    ? "border-transparent bg-brand text-brand-foreground hover:bg-brand/90"
+                    : "border-neutral-200 bg-transparent text-neutral-700 hover:border-brand/50 dark:border-white/10 dark:text-neutral-300 dark:hover:border-brand/40"
+                }`}
+              >
+                <tab.icon size={15} className="shrink-0" />
+                {tab.label}
+              </button>
+            );
+          })}
+        </motion.div>
+
+        {/* Active copy */}
+        <div className="mt-6 text-center">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={current.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.25 }}
+              className="mx-auto max-w-2xl"
+            >
+              <h3 className="font-sans text-lg font-semibold tracking-tight text-neutral-950 dark:text-white">
+                {current.title}
+              </h3>
+              <p className="mt-2 font-sans text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+                {current.body}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Window */}
+        <motion.div
+          {...reveal}
+          transition={{ duration: 0.8, delay: 0.25 }}
+          className="mt-10"
+        >
+          <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-neutral-200/80 bg-white shadow-2xl shadow-neutral-900/10 dark:border-white/10 dark:bg-neutral-950 dark:shadow-black/60">
+            <div className="flex items-center gap-2 border-b border-neutral-200 px-4 py-3 dark:border-white/10">
+              <span className="size-2.5 rounded-full bg-neutral-300 dark:bg-neutral-700" />
+              <span className="size-2.5 rounded-full bg-neutral-300 dark:bg-neutral-700" />
+              <span className="size-2.5 rounded-full bg-neutral-300 dark:bg-neutral-700" />
+              <span className="ml-3 font-mono text-xs text-neutral-500">
+                {current.window}
+              </span>
+            </div>
+
+            <div className="min-h-104 p-5 sm:p-6">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={current.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.25 }}
                 >
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={`flex size-9 shrink-0 items-center justify-center rounded-full border ${
-                        isActive
-                          ? "border-neutral-950 bg-neutral-950 text-white dark:border-white dark:bg-white dark:text-neutral-950"
-                          : "border-neutral-200 bg-neutral-50 text-neutral-700 dark:border-white/10 dark:bg-neutral-900 dark:text-neutral-300"
-                      }`}
-                    >
-                      <tab.icon size={16} />
-                    </span>
-                    <h3 className="font-sans text-base font-semibold tracking-tight text-neutral-950 dark:text-white">
-                      {tab.title}
-                    </h3>
-                  </div>
-                  <p className="mt-3 font-sans text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-                    {tab.body}
-                  </p>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Window */}
-          <div className="lg:col-span-3">
-            <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-2xl shadow-neutral-900/10 dark:border-white/10 dark:bg-neutral-950 dark:shadow-black/60">
-              <div className="flex items-center gap-2 border-b border-neutral-200 px-4 py-3 dark:border-white/10">
-                <span className="size-3 rounded-full bg-neutral-300 dark:bg-neutral-700" />
-                <span className="size-3 rounded-full bg-neutral-300 dark:bg-neutral-700" />
-                <span className="size-3 rounded-full bg-neutral-300 dark:bg-neutral-700" />
-                <span className="ml-3 font-sans text-xs text-neutral-500">
-                  {current.window}
-                </span>
-              </div>
-
-              <div className="min-h-104 p-5 sm:p-6">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={current.id}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.25 }}
-                  >
-                    {current.view}
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+                  {current.view}
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
+
+          {/* Caption row */}
+          <p className="mt-4 text-center font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">
+            Interactive preview &mdash; switch tabs to compare views
+          </p>
         </motion.div>
       </div>
     </section>

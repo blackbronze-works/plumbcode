@@ -19,9 +19,9 @@ export const INSTALLATION_ERROR_MESSAGES: Record<
   string
 > = {
   github_not_linked:
-    "Your Plumbcode account isn't connected to GitHub yet. Sign in with GitHub, then install the app.",
+    "Your Plumbcode account isn't connected to GitHub yet. Connect GitHub, then install the app.",
   github_token_invalid:
-    "Your GitHub connection expired. Sign in with GitHub again, then retry the installation.",
+    "Your GitHub connection expired. Reconnect GitHub, then retry the installation.",
   installation_not_found:
     "GitHub couldn't confirm that installation belongs to your account. Try installing again.",
   installation_already_linked:

@@ -37,7 +37,7 @@ const CountUp = ({ value, suffix }: { value: number; suffix: string }) => {
 
 const Stats = () => {
   return (
-    <section className="px-4 pb-8 sm:px-6">
+    <section className="px-4 pb-10 sm:px-6">
       <motion.div
         initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
         whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -45,24 +45,24 @@ const Stats = () => {
         transition={{ duration: 0.8 }}
         className="mx-auto max-w-6xl"
       >
-        <p className="text-center font-sans text-xs font-medium uppercase tracking-widest text-neutral-500">
+        <p className="flex items-center justify-center gap-3 text-center font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-neutral-500">
+          <span className="h-px w-8 bg-linear-to-r from-transparent to-brand/60 sm:w-12" />
           Trusted by engineering teams in early access
+          <span className="h-px w-8 bg-linear-to-l from-transparent to-brand/60 sm:w-12" />
         </p>
 
-        <div className="mt-8 grid grid-cols-2 overflow-hidden rounded-2xl border border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-950 md:grid-cols-4">
+        <div className="relative mt-6 grid grid-cols-2 overflow-hidden border-y border-neutral-200 dark:border-white/10 md:grid-cols-4">
+          <span
+            aria-hidden
+            className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-brand/70 to-transparent"
+          />
           {STATS.map((stat, i) => (
             <div
               key={stat.label}
-              className={`px-6 py-8 text-center sm:py-10 ${
-                i % 2 === 1
-                  ? "border-l border-neutral-200 dark:border-white/10"
-                  : ""
-              } ${
-                i >= 2 ? "border-t border-neutral-200 dark:border-white/10" : ""
-              } md:border-t-0 ${
-                i > 0
-                  ? "md:border-l md:border-neutral-200 md:dark:border-white/10"
-                  : ""
+              className={`border-neutral-200 px-6 py-10 text-center dark:border-white/10 sm:py-12 ${
+                i % 2 === 1 ? "border-l" : ""
+              } ${i >= 2 ? "border-t md:border-t-0" : ""} ${
+                i > 0 ? "md:border-l" : ""
               }`}
             >
               <div className="font-barabara text-4xl tracking-tight text-neutral-950 dark:text-white sm:text-5xl">

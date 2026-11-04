@@ -7,7 +7,7 @@ import { useState, useSyncExternalStore, useEffect } from "react";
 import { Loader2, LogOut, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-// import ThemeToggle from "../ThemeToggle";
+import ThemeToggle from "../ThemeToggle";
 import { Button } from "../ui/button";
 import { GithubIcon } from "../GithubIcon";
 import { authClient } from "@/lib/auth-client";
@@ -68,15 +68,15 @@ const Header = () => {
     <motion.header
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 2.6, duration: 0.6 }}
+      transition={{ delay: 1.35, duration: 0.6 }}
       className="fixed inset-x-0 top-0 z-50 w-full px-3 pt-3"
     >
       <div
         className={cn(
           "mx-auto grid grid-cols-3 items-center border px-4 py-3 transition-all duration-300 ease-out sm:px-6",
           scrolled
-            ? "max-w-6xl rounded-full border-neutral-200/30 bg-white/30 backdrop-blur-sm dark:border-white/10 dark:bg-neutral-950/30"
-            : "max-w-7xl rounded-full border-transparent bg-transparent backdrop-blur-none",
+            ? "max-w-6xl rounded-full border-neutral-200/30 bg-white/80 shadow-[0_18px_50px_-30px_var(--brand-glow)] dark:border-white/10 dark:bg-neutral-950/80"
+            : "max-w-7xl rounded-full border-transparent bg-transparent",
         )}
       >
         {/* Section 1: Logo (Left - 1/3 width) */}
@@ -115,7 +115,7 @@ const Header = () => {
             <Link
               key={item.label}
               href={item.href}
-              className="text-sm text-neutral-700 transition-colors hover:text-neutral-950 dark:text-neutral-300 dark:hover:text-white"
+              className="text-sm text-neutral-700 transition-colors hover:text-brand dark:text-neutral-300 dark:hover:text-brand"
             >
               {item.label}
             </Link>
@@ -124,7 +124,7 @@ const Header = () => {
 
         {/* Section 3: Right Side Actions (Right - 1/3 width, right-aligned) */}
         <div className="col-span-2 flex items-center justify-end gap-2 md:col-span-1">
-          {/* <ThemeToggle /> */}
+          <ThemeToggle />
 
           {session ? (
             <>
@@ -168,7 +168,7 @@ const Header = () => {
           <Button
             nativeButton={false}
             render={<Link href="/install" />}
-            className="inline-flex items-center gap-2 rounded-full bg-neutral-950 h-auto px-6 py-3 font-sans text-sm font-medium text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+            className="brand-glow inline-flex items-center gap-2 rounded-full bg-brand h-auto px-6 py-3 font-sans text-sm font-medium text-brand-foreground transition-all hover:bg-brand/90"
           >
             <GithubIcon size={18} />
             Install on GitHub
@@ -203,7 +203,7 @@ const Header = () => {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col border-l border-neutral-200/80 bg-white/95 p-6 shadow-lg backdrop-blur-md dark:border-neutral-800 dark:bg-neutral-950/95 md:hidden"
+              className="fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col border-l border-neutral-200/80 bg-white/95 p-6 shadow-lg dark:border-neutral-800 dark:bg-neutral-950/95 md:hidden"
             >
               <div className="flex items-center justify-between">
                 <Link
@@ -246,7 +246,7 @@ const Header = () => {
                     key={item.label}
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className="py-3 text-sm font-medium text-neutral-700 transition-colors hover:text-neutral-950 dark:text-neutral-300 dark:hover:text-white"
+                    className="py-3 text-sm font-medium text-neutral-700 transition-colors hover:text-brand dark:text-neutral-300 dark:hover:text-brand"
                   >
                     {item.label}
                   </Link>
@@ -300,7 +300,7 @@ const Header = () => {
                     <Link href="/install" onClick={() => setOpen(false)} />
                   }
                   nativeButton={false}
-                  className="h-auto rounded-full bg-neutral-950 px-4 py-2 text-center text-sm font-medium text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+                  className="h-auto rounded-full bg-brand px-4 py-2 text-center text-sm font-medium text-brand-foreground transition-colors hover:bg-brand/90"
                 >
                   <GithubIcon size={18} />
                   Install on GitHub

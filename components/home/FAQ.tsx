@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { Plus } from "lucide-react";
+import { ArrowRight, Plus } from "lucide-react";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
@@ -47,73 +48,97 @@ const FAQ = () => {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="relative px-4 py-24 sm:px-6 sm:py-32">
-      <div className="mx-auto max-w-3xl">
-        {/* Heading */}
-        <div className="text-center">
-          <motion.p
-            {...reveal}
-            transition={{ duration: 0.7 }}
-            className="font-sans text-xs font-medium uppercase tracking-widest text-neutral-500"
-          >
-            FAQ
-          </motion.p>
+    <section id="faq" className="px-4 py-24 sm:px-6 sm:py-32">
+      <div className="mx-auto max-w-6xl">
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.35fr] lg:gap-20">
+          {/* Left — sticky editorial column */}
+          <div className="self-start lg:sticky lg:top-28">
+            <motion.p
+              {...reveal}
+              transition={{ duration: 0.7 }}
+              className="font-mono text-xs font-medium uppercase tracking-[0.2em] text-brand"
+            >
+              06 &middot; FAQ
+            </motion.p>
 
-          <motion.h2
-            {...reveal}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="font-barabara mt-4 text-4xl leading-[1.1] tracking-tight text-neutral-950 dark:text-white sm:text-5xl"
-          >
-            Questions teams ask before installing
-          </motion.h2>
-        </div>
+            <motion.h2
+              {...reveal}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              className="font-barabara mt-4 text-4xl leading-[1.1] tracking-tight text-neutral-950 dark:text-white sm:text-5xl"
+            >
+              Questions teams ask before installing
+            </motion.h2>
 
-        {/* Accordion */}
-        <motion.div
-          {...reveal}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="mt-14 divide-y divide-neutral-200 overflow-hidden rounded-2xl border border-neutral-200 bg-white dark:divide-white/10 dark:border-white/10 dark:bg-neutral-950"
-        >
-          {FAQS.map((item, i) => {
-            const isOpen = open === i;
-            return (
-              <div key={item.q}>
-                <button
-                  onClick={() => setOpen(isOpen ? null : i)}
-                  aria-expanded={isOpen}
-                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
-                >
-                  <span className="font-sans text-base font-medium text-neutral-950 dark:text-white">
-                    {item.q}
-                  </span>
-                  <motion.span
-                    animate={{ rotate: isOpen ? 45 : 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="flex size-7 shrink-0 items-center justify-center rounded-full border border-neutral-200 text-neutral-700 dark:border-white/10 dark:text-neutral-300"
+            <motion.div
+              {...reveal}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="mt-8"
+            >
+              <p className="font-sans text-sm text-neutral-600 dark:text-neutral-400">
+                Still have questions?
+              </p>
+              <Link
+                href="/contact"
+                className="group mt-2 inline-flex items-center gap-2 font-sans text-sm font-medium text-brand underline-offset-4 hover:text-brand/80 hover:underline"
+              >
+                Talk to us
+                <ArrowRight
+                  size={14}
+                  className="transition-transform group-hover:translate-x-0.5"
+                />
+              </Link>
+            </motion.div>
+          </div>
+
+          {/* Right — hairline accordion */}
+          <motion.div
+            {...reveal}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="divide-y divide-neutral-200 border-y border-neutral-200 dark:divide-white/10 dark:border-white/10"
+          >
+            {FAQS.map((item, i) => {
+              const isOpen = open === i;
+              return (
+                <div key={item.q}>
+                  <button
+                    onClick={() => setOpen(isOpen ? null : i)}
+                    aria-expanded={isOpen}
+                    className="flex w-full items-center justify-between gap-4 py-5 text-left"
                   >
-                    <Plus size={14} />
-                  </motion.span>
-                </button>
-
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: "easeOut" }}
-                      className="overflow-hidden"
+                    <span className="font-sans text-base font-medium text-neutral-950 dark:text-white">
+                      {item.q}
+                    </span>
+                    <motion.span
+                      animate={{ rotate: isOpen ? 45 : 0 }}
+                      transition={{ duration: 0.2 }}
+                      className={`shrink-0 transition-colors duration-200 ${
+                        isOpen ? "text-brand" : "text-neutral-500"
+                      }`}
                     >
-                      <p className="px-6 pb-6 font-sans text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-                        {item.a}
-                      </p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            );
-          })}
-        </motion.div>
+                      <Plus size={16} />
+                    </motion.span>
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: "easeOut" }}
+                        className="overflow-hidden"
+                      >
+                        <p className="max-w-2xl pb-6 font-sans text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+                          {item.a}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+          </motion.div>
+        </div>
       </div>
     </section>
   );

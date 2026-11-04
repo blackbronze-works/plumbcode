@@ -82,9 +82,9 @@ const Pricing = () => {
           <motion.p
             {...reveal}
             transition={{ duration: 0.7 }}
-            className="font-sans text-xs font-medium uppercase tracking-widest text-neutral-500"
+            className="font-mono text-xs font-medium uppercase tracking-[0.2em] text-brand"
           >
-            Pricing
+            05 &middot; Pricing
           </motion.p>
 
           <motion.h2
@@ -105,71 +105,73 @@ const Pricing = () => {
           </motion.p>
         </div>
 
-        {/* Plans */}
-        <div className="mt-16 grid gap-4 lg:grid-cols-3">
-          {PLANS.map((plan, i) => (
-            <motion.div
-              key={plan.name}
-              {...reveal}
-              transition={{ duration: 0.8, delay: 0.1 + i * 0.1 }}
-              className={`relative flex flex-col rounded-2xl border bg-white p-6 dark:bg-neutral-950 sm:p-8 ${
-                plan.highlighted
-                  ? "border-neutral-950 dark:border-white"
-                  : "border-neutral-200 dark:border-white/10"
-              }`}
-            >
-              {plan.highlighted && (
-                <span className="absolute -top-3 left-6 rounded-full bg-neutral-950 px-3 py-1 font-sans text-xs font-medium text-white dark:bg-white dark:text-neutral-950 sm:left-8">
-                  Most popular
-                </span>
-              )}
-
-              <h3 className="font-sans text-lg font-semibold tracking-tight text-neutral-950 dark:text-white">
-                {plan.name}
-              </h3>
-              <p className="mt-2 min-h-10 font-sans text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-                {plan.description}
-              </p>
-
-              <div className="mt-6 flex items-baseline gap-2">
-                <span className="font-barabara text-5xl tracking-tight text-neutral-950 dark:text-white">
-                  {plan.price}
-                </span>
-                {plan.unit && (
-                  <span className="font-sans text-sm text-neutral-500">
-                    {plan.unit}
-                  </span>
-                )}
-              </div>
-
-              <Button
-                nativeButton={false}
-                render={<Link href={plan.href} />}
-                variant={plan.highlighted ? "default" : "outline"}
-                className={`mt-6 h-auto rounded-full px-6 py-3 font-sans text-sm font-medium transition-colors ${
-                  plan.highlighted
-                    ? "bg-neutral-950 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
-                    : "border-neutral-300 bg-white text-neutral-800 hover:bg-neutral-50 dark:border-white/15 dark:bg-neutral-950 dark:text-neutral-200 dark:hover:bg-neutral-900"
+        {/* Plans — Team is the inverted black card */}
+        <div className="mt-16 grid items-stretch gap-4 lg:grid-cols-3">
+          {PLANS.map((plan, i) => {
+            const inverted = plan.highlighted;
+            return (
+              <motion.div
+                key={plan.name}
+                {...reveal}
+                transition={{ duration: 0.8, delay: 0.1 + i * 0.1 }}
+                className={`relative flex flex-col rounded-2xl border p-6 sm:p-8 ${
+                  inverted
+                    ? "border-brand/40 bg-linear-to-br from-brand-soft to-brand/10 text-neutral-950 shadow-[0_30px_80px_-44px_var(--brand-glow)] dark:border-brand/25 dark:text-white"
+                    : "border-neutral-200 bg-white dark:border-white/10 dark:bg-neutral-950"
                 }`}
               >
-                {plan.cta}
-              </Button>
+                {inverted && (
+                  <span className="absolute -top-3 left-6 rounded-full bg-brand px-3 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.15em] text-brand-foreground shadow-[0_8px_24px_-8px_var(--brand-glow)] sm:left-8">
+                    Most popular
+                  </span>
+                )}
 
-              <ul className="mt-8 space-y-3 border-t border-neutral-200 pt-6 dark:border-white/10">
-                {plan.features.map((feature) => (
-                  <li
-                    key={feature}
-                    className="flex items-start gap-3 font-sans text-sm text-neutral-700 dark:text-neutral-300"
-                  >
-                    <span className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-                      <Check size={11} strokeWidth={3} />
+                <h3 className="font-sans text-lg font-semibold tracking-tight text-neutral-950 dark:text-white">
+                  {plan.name}
+                </h3>
+                <p className="mt-2 min-h-10 font-sans text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+                  {plan.description}
+                </p>
+
+                <div className="mt-6 flex items-baseline gap-2">
+                  <span className="font-barabara text-5xl tracking-tight text-neutral-950 dark:text-white">
+                    {plan.price}
+                  </span>
+                  {plan.unit && (
+                    <span className="font-sans text-sm text-neutral-600 dark:text-neutral-400">
+                      {plan.unit}
                     </span>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          ))}
+                  )}
+                </div>
+
+                <Button
+                  nativeButton={false}
+                  render={<Link href={plan.href} />}
+                  className={`mt-6 h-auto rounded-full px-6 py-3 font-sans text-sm font-medium transition-colors ${
+                    inverted
+                      ? "brand-glow bg-brand text-brand-foreground hover:bg-brand/90"
+                      : "border border-neutral-300 bg-white text-neutral-800 hover:bg-neutral-50 dark:border-white/15 dark:bg-neutral-950 dark:text-neutral-200 dark:hover:bg-neutral-900"
+                  }`}
+                >
+                  {plan.cta}
+                </Button>
+
+                <ul className="mt-8 space-y-3 border-t border-neutral-200 pt-6 dark:border-white/10">
+                  {plan.features.map((feature) => (
+                    <li
+                      key={feature}
+                      className="flex items-start gap-3 font-sans text-sm text-neutral-700 dark:text-neutral-300"
+                    >
+                      <span className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-brand/15 text-brand">
+                        <Check size={11} strokeWidth={3} />
+                      </span>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            );
+          })}
         </div>
 
         {/* Footnote */}
@@ -178,10 +180,11 @@ const Pricing = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="mt-8 text-center font-sans text-sm text-neutral-500"
         >
-          Early-access teams get Team free while we shape the product with them.{" "}
+          Early-access teams get Team free while we shape the product with
+          them.{" "}
           <Link
             href="/contact"
-            className="text-neutral-800 underline underline-offset-4 hover:text-neutral-950 dark:text-neutral-200 dark:hover:text-white"
+            className="font-medium text-brand underline underline-offset-4 hover:text-brand/80"
           >
             Talk to us
           </Link>

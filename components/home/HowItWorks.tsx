@@ -16,7 +16,7 @@ const reveal = {
   viewport: { once: true, margin: "-80px" },
 } as const;
 
-/* ---------- Step visuals ---------- */
+/* ---------- Step visuals (mock imagery — semantic color lives inside) ---------- */
 
 const InstallVisual = () => (
   <div className="w-full rounded-xl border border-neutral-200 bg-white p-5 dark:border-white/10 dark:bg-neutral-950">
@@ -159,19 +159,19 @@ const FindingVisual = () => (
 
 const STEPS = [
   {
-    number: "01",
+    label: "Step 01",
     title: "Install the GitHub App",
     body: "Pick the repositories you want covered. Plumbcode asks for the minimum permissions it needs to read a PR and post a check run, nothing more.",
     visual: <InstallVisual />,
   },
   {
-    number: "02",
+    label: "Step 02",
     title: "Write down your principles",
     body: "Paste or upload your standards as Markdown. Give each rule an ID so every finding can point back to exactly the rule it came from.",
     visual: <PrinciplesVisual />,
   },
   {
-    number: "03",
+    label: "Step 03",
     title: "Get findings on every PR",
     body: "Each pull request is checked against your rules. Findings cite the rule and the exact lines, so a developer can accept or dismiss them in seconds.",
     visual: <FindingVisual />,
@@ -180,16 +180,16 @@ const STEPS = [
 
 const HowItWorks = () => {
   return (
-    <section id="how-it-works" className="relative px-4 py-24 sm:px-6 sm:py-32">
+    <section id="how-it-works" className="px-4 py-24 sm:px-6 sm:py-32">
       <div className="mx-auto max-w-6xl">
         {/* Heading */}
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="max-w-3xl">
           <motion.p
             {...reveal}
             transition={{ duration: 0.7 }}
-            className="font-sans text-xs font-medium uppercase tracking-widest text-neutral-500"
+            className="font-mono text-xs font-medium uppercase tracking-[0.2em] text-brand"
           >
-            How it works
+            02 &middot; How it works
           </motion.p>
 
           <motion.h2
@@ -209,47 +209,39 @@ const HowItWorks = () => {
           </motion.p>
         </div>
 
-        {/* Steps */}
-        <div className="relative mt-20">
-          {/* Timeline line (desktop) */}
-          <div className="absolute bottom-0 left-1/2 top-0 hidden w-px -translate-x-1/2 bg-neutral-200 dark:bg-white/10 md:block" />
+        {/* Full-width hairline rows */}
+        <div className="mt-16 border-y border-neutral-200 dark:border-white/10">
+          {STEPS.map((step, i) => (
+            <motion.div
+              key={step.label}
+              {...reveal}
+              transition={{ duration: 0.8, delay: i * 0.1 }}
+              className={`grid items-center gap-10 py-12 dark:border-white/10 sm:py-16 lg:grid-cols-[1fr_1.15fr] lg:gap-24 ${
+                i > 0 ? "mt-0 border-t border-neutral-200" : ""
+              }`}
+            >
+              {/* Text */}
+              <div>
+                <span className="font-mono text-xs font-medium uppercase tracking-[0.2em] text-brand">
+                  {step.label}
+                </span>
+                <h3 className="font-barabara mt-3 text-3xl leading-tight tracking-tight text-neutral-950 dark:text-white">
+                  {step.title}
+                </h3>
+                <p className="mt-4 max-w-md font-sans text-base leading-relaxed text-neutral-600 dark:text-neutral-400">
+                  {step.body}
+                </p>
+              </div>
 
-          <div className="space-y-16 md:space-y-24">
-            {STEPS.map((step, i) => {
-              const flipped = i % 2 === 1;
-              return (
-                <motion.div
-                  key={step.number}
-                  {...reveal}
-                  transition={{ duration: 0.8 }}
-                  className="relative grid items-center gap-8 md:grid-cols-2 md:gap-20"
-                >
-                  {/* Number marker on the timeline */}
-                  <div className="absolute left-1/2 top-1/2 z-10 hidden size-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-neutral-200 bg-white font-barabara text-sm text-neutral-950 dark:border-white/10 dark:bg-neutral-950 dark:text-white md:flex">
-                    {step.number}
-                  </div>
-
-                  {/* Text */}
-                  <div className={flipped ? "md:order-2" : ""}>
-                    <span className="font-barabara text-sm text-neutral-400 md:hidden">
-                      {step.number}
-                    </span>
-                    <h3 className="mt-1 font-barabara text-3xl leading-tight tracking-tight text-neutral-950 dark:text-white md:mt-0">
-                      {step.title}
-                    </h3>
-                    <p className="mt-4 max-w-md font-sans text-base leading-relaxed text-neutral-600 dark:text-neutral-400">
-                      {step.body}
-                    </p>
-                  </div>
-
-                  {/* Visual */}
-                  <div className={flipped ? "md:order-1" : ""}>
-                    {step.visual}
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
+              {/* Visual */}
+              <motion.div
+                {...reveal}
+                transition={{ duration: 0.8, delay: 0.15 + i * 0.1 }}
+              >
+                {step.visual}
+              </motion.div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
