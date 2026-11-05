@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { GitBranch } from "lucide-react";
 import AddRepositoryCard from "@/components/dashboard/AddRepositoryCard";
 import ConnectGitHubButton from "@/components/dashboard/ConnectGitHubButton";
 import RepoPrinciplesDialog from "@/components/dashboard/RepoPrinciplesDialog";
@@ -124,13 +125,19 @@ async function RepositoriesContent() {
       )}
 
       {repos.length === 0 && (
-        <p className="mt-8 font-sans text-sm text-neutral-600 dark:text-neutral-400">
-          No repositories are connected yet.
-        </p>
+        <div className="mt-8 flex w-full flex-col items-center justify-center gap-3 rounded-2xl border border-neutral-200 bg-white p-10 text-center dark:border-white/10 dark:bg-neutral-950">
+          <div className="flex size-10 items-center justify-center rounded-full border border-neutral-300 dark:border-white/20">
+            <GitBranch size={18} className="text-neutral-600 dark:text-neutral-400" />
+          </div>
+          <p className="font-sans text-sm text-neutral-600 dark:text-neutral-400">
+            No repositories are connected yet.
+          </p>
+          <AddRepositoryCard url={addUrl} />
+        </div>
       )}
 
       <ul
-        className={`${repos.length === 0 ? "mt-4" : "mt-8"} grid gap-4 sm:grid-cols-2`}
+        className={`${repos.length === 0 ? "hidden" : "mt-8"} grid gap-4 sm:grid-cols-2`}
       >
         {repos.map((repo) => {
           const markdown = markdownByRepo.get(
@@ -204,7 +211,7 @@ async function RepositoriesContent() {
           );
         })}
 
-        <li className={repos.length === 0 ? "flex sm:col-span-2" : "flex"}>
+        <li className="flex">
           <AddRepositoryCard url={addUrl} />
         </li>
       </ul>
