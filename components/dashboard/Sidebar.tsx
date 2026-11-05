@@ -32,7 +32,7 @@ type NavItem = {
 
 const NAV: NavItem[] = [
   { label: "Overview", href: "/dashboard", icon: Home },
-  { label: "Repositories", href: "/dashboard/repos", icon: GitBranch },
+  { label: "Repositories", href: "/dashboard/repositories", icon: GitBranch },
   { label: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
@@ -391,7 +391,7 @@ export default function Sidebar({
               "flex flex-1 items-center rounded-md text-left transition-colors hover:bg-neutral-100 dark:hover:bg-white/5 p-1 gap-2 overflow-hidden",
             )}
           >
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-neutral-600 to-neutral-950 text-sm font-semibold text-white ring-2 ring-white dark:from-neutral-300 dark:to-neutral-500 dark:text-neutral-950 dark:ring-neutral-900">
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-neutral-600 to-neutral-950 text-sm font-semibold text-white ring-2 ring-white dark:from-neutral-300 dark:to-neutral-500 dark:text-neutral-950 dark:ring-neutral-900">
               {userName.charAt(0).toUpperCase() || "?"}
             </span>
 

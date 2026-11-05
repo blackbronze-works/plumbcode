@@ -55,6 +55,7 @@ export const ModelName = {
   Session: 'Session',
   Account: 'Account',
   Installation: 'Installation',
+  PrincipleSet: 'PrincipleSet',
   Verification: 'Verification'
 } as const
 
@@ -129,6 +130,19 @@ export const InstallationScalarFieldEnum = {
 } as const
 
 export type InstallationScalarFieldEnum = (typeof InstallationScalarFieldEnum)[keyof typeof InstallationScalarFieldEnum]
+
+
+export const PrincipleSetScalarFieldEnum = {
+  id: 'id',
+  installationId: 'installationId',
+  repoFullName: 'repoFullName',
+  markdown: 'markdown',
+  version: 'version',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PrincipleSetScalarFieldEnum = (typeof PrincipleSetScalarFieldEnum)[keyof typeof PrincipleSetScalarFieldEnum]
 
 
 export const VerificationScalarFieldEnum = {

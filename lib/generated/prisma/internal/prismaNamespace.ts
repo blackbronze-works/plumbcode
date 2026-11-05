@@ -401,6 +401,7 @@ export const ModelName = {
   Session: 'Session',
   Account: 'Account',
   Installation: 'Installation',
+  PrincipleSet: 'PrincipleSet',
   Verification: 'Verification'
 } as const
 
@@ -417,7 +418,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "installation" | "verification"
+    modelProps: "user" | "session" | "account" | "installation" | "principleSet" | "verification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -717,6 +718,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    PrincipleSet: {
+      payload: Prisma.$PrincipleSetPayload<ExtArgs>
+      fields: Prisma.PrincipleSetFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PrincipleSetFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrincipleSetPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PrincipleSetFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrincipleSetPayload>
+        }
+        findFirst: {
+          args: Prisma.PrincipleSetFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrincipleSetPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PrincipleSetFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrincipleSetPayload>
+        }
+        findMany: {
+          args: Prisma.PrincipleSetFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrincipleSetPayload>[]
+        }
+        create: {
+          args: Prisma.PrincipleSetCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrincipleSetPayload>
+        }
+        createMany: {
+          args: Prisma.PrincipleSetCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PrincipleSetCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrincipleSetPayload>[]
+        }
+        delete: {
+          args: Prisma.PrincipleSetDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrincipleSetPayload>
+        }
+        update: {
+          args: Prisma.PrincipleSetUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrincipleSetPayload>
+        }
+        deleteMany: {
+          args: Prisma.PrincipleSetDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PrincipleSetUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PrincipleSetUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrincipleSetPayload>[]
+        }
+        upsert: {
+          args: Prisma.PrincipleSetUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrincipleSetPayload>
+        }
+        aggregate: {
+          args: Prisma.PrincipleSetAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePrincipleSet>
+        }
+        groupBy: {
+          args: Prisma.PrincipleSetGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PrincipleSetGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PrincipleSetCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PrincipleSetCountAggregateOutputType> | number
+        }
+      }
+    }
     Verification: {
       payload: Prisma.$VerificationPayload<ExtArgs>
       fields: Prisma.VerificationFieldRefs
@@ -885,6 +960,19 @@ export const InstallationScalarFieldEnum = {
 } as const
 
 export type InstallationScalarFieldEnum = (typeof InstallationScalarFieldEnum)[keyof typeof InstallationScalarFieldEnum]
+
+
+export const PrincipleSetScalarFieldEnum = {
+  id: 'id',
+  installationId: 'installationId',
+  repoFullName: 'repoFullName',
+  markdown: 'markdown',
+  version: 'version',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PrincipleSetScalarFieldEnum = (typeof PrincipleSetScalarFieldEnum)[keyof typeof PrincipleSetScalarFieldEnum]
 
 
 export const VerificationScalarFieldEnum = {
@@ -1146,6 +1234,7 @@ export type GlobalOmitConfig = {
   session?: Prisma.SessionOmit
   account?: Prisma.AccountOmit
   installation?: Prisma.InstallationOmit
+  principleSet?: Prisma.PrincipleSetOmit
   verification?: Prisma.VerificationOmit
 }
 

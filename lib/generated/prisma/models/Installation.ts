@@ -217,6 +217,7 @@ export type InstallationWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Installation"> | Date | string
   userId?: Prisma.StringFilter<"Installation"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  principles?: Prisma.PrincipleSetListRelationFilter
 }
 
 export type InstallationOrderByWithRelationInput = {
@@ -226,6 +227,7 @@ export type InstallationOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  principles?: Prisma.PrincipleSetOrderByRelationAggregateInput
 }
 
 export type InstallationWhereUniqueInput = Prisma.AtLeast<{
@@ -238,6 +240,7 @@ export type InstallationWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Installation"> | Date | string
   userId?: Prisma.StringFilter<"Installation"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  principles?: Prisma.PrincipleSetListRelationFilter
 }, "id">
 
 export type InstallationOrderByWithAggregationInput = {
@@ -270,6 +273,7 @@ export type InstallationCreateInput = {
   accountType: string
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutInstallationsInput
+  principles?: Prisma.PrincipleSetCreateNestedManyWithoutInstallationInput
 }
 
 export type InstallationUncheckedCreateInput = {
@@ -278,6 +282,7 @@ export type InstallationUncheckedCreateInput = {
   accountType: string
   createdAt?: Date | string
   userId: string
+  principles?: Prisma.PrincipleSetUncheckedCreateNestedManyWithoutInstallationInput
 }
 
 export type InstallationUpdateInput = {
@@ -286,6 +291,7 @@ export type InstallationUpdateInput = {
   accountType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutInstallationsNestedInput
+  principles?: Prisma.PrincipleSetUpdateManyWithoutInstallationNestedInput
 }
 
 export type InstallationUncheckedUpdateInput = {
@@ -294,6 +300,7 @@ export type InstallationUncheckedUpdateInput = {
   accountType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  principles?: Prisma.PrincipleSetUncheckedUpdateManyWithoutInstallationNestedInput
 }
 
 export type InstallationCreateManyInput = {
@@ -361,6 +368,11 @@ export type InstallationSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
 }
 
+export type InstallationScalarRelationFilter = {
+  is?: Prisma.InstallationWhereInput
+  isNot?: Prisma.InstallationWhereInput
+}
+
 export type InstallationCreateNestedManyWithoutUserInput = {
   create?: Prisma.XOR<Prisma.InstallationCreateWithoutUserInput, Prisma.InstallationUncheckedCreateWithoutUserInput> | Prisma.InstallationCreateWithoutUserInput[] | Prisma.InstallationUncheckedCreateWithoutUserInput[]
   connectOrCreate?: Prisma.InstallationCreateOrConnectWithoutUserInput | Prisma.InstallationCreateOrConnectWithoutUserInput[]
@@ -411,11 +423,26 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type InstallationCreateNestedOneWithoutPrinciplesInput = {
+  create?: Prisma.XOR<Prisma.InstallationCreateWithoutPrinciplesInput, Prisma.InstallationUncheckedCreateWithoutPrinciplesInput>
+  connectOrCreate?: Prisma.InstallationCreateOrConnectWithoutPrinciplesInput
+  connect?: Prisma.InstallationWhereUniqueInput
+}
+
+export type InstallationUpdateOneRequiredWithoutPrinciplesNestedInput = {
+  create?: Prisma.XOR<Prisma.InstallationCreateWithoutPrinciplesInput, Prisma.InstallationUncheckedCreateWithoutPrinciplesInput>
+  connectOrCreate?: Prisma.InstallationCreateOrConnectWithoutPrinciplesInput
+  upsert?: Prisma.InstallationUpsertWithoutPrinciplesInput
+  connect?: Prisma.InstallationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.InstallationUpdateToOneWithWhereWithoutPrinciplesInput, Prisma.InstallationUpdateWithoutPrinciplesInput>, Prisma.InstallationUncheckedUpdateWithoutPrinciplesInput>
+}
+
 export type InstallationCreateWithoutUserInput = {
   id: number
   accountLogin: string
   accountType: string
   createdAt?: Date | string
+  principles?: Prisma.PrincipleSetCreateNestedManyWithoutInstallationInput
 }
 
 export type InstallationUncheckedCreateWithoutUserInput = {
@@ -423,6 +450,7 @@ export type InstallationUncheckedCreateWithoutUserInput = {
   accountLogin: string
   accountType: string
   createdAt?: Date | string
+  principles?: Prisma.PrincipleSetUncheckedCreateNestedManyWithoutInstallationInput
 }
 
 export type InstallationCreateOrConnectWithoutUserInput = {
@@ -462,6 +490,54 @@ export type InstallationScalarWhereInput = {
   userId?: Prisma.StringFilter<"Installation"> | string
 }
 
+export type InstallationCreateWithoutPrinciplesInput = {
+  id: number
+  accountLogin: string
+  accountType: string
+  createdAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutInstallationsInput
+}
+
+export type InstallationUncheckedCreateWithoutPrinciplesInput = {
+  id: number
+  accountLogin: string
+  accountType: string
+  createdAt?: Date | string
+  userId: string
+}
+
+export type InstallationCreateOrConnectWithoutPrinciplesInput = {
+  where: Prisma.InstallationWhereUniqueInput
+  create: Prisma.XOR<Prisma.InstallationCreateWithoutPrinciplesInput, Prisma.InstallationUncheckedCreateWithoutPrinciplesInput>
+}
+
+export type InstallationUpsertWithoutPrinciplesInput = {
+  update: Prisma.XOR<Prisma.InstallationUpdateWithoutPrinciplesInput, Prisma.InstallationUncheckedUpdateWithoutPrinciplesInput>
+  create: Prisma.XOR<Prisma.InstallationCreateWithoutPrinciplesInput, Prisma.InstallationUncheckedCreateWithoutPrinciplesInput>
+  where?: Prisma.InstallationWhereInput
+}
+
+export type InstallationUpdateToOneWithWhereWithoutPrinciplesInput = {
+  where?: Prisma.InstallationWhereInput
+  data: Prisma.XOR<Prisma.InstallationUpdateWithoutPrinciplesInput, Prisma.InstallationUncheckedUpdateWithoutPrinciplesInput>
+}
+
+export type InstallationUpdateWithoutPrinciplesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  accountLogin?: Prisma.StringFieldUpdateOperationsInput | string
+  accountType?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutInstallationsNestedInput
+}
+
+export type InstallationUncheckedUpdateWithoutPrinciplesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  accountLogin?: Prisma.StringFieldUpdateOperationsInput | string
+  accountType?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
 export type InstallationCreateManyUserInput = {
   id: number
   accountLogin: string
@@ -474,6 +550,7 @@ export type InstallationUpdateWithoutUserInput = {
   accountLogin?: Prisma.StringFieldUpdateOperationsInput | string
   accountType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  principles?: Prisma.PrincipleSetUpdateManyWithoutInstallationNestedInput
 }
 
 export type InstallationUncheckedUpdateWithoutUserInput = {
@@ -481,6 +558,7 @@ export type InstallationUncheckedUpdateWithoutUserInput = {
   accountLogin?: Prisma.StringFieldUpdateOperationsInput | string
   accountType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  principles?: Prisma.PrincipleSetUncheckedUpdateManyWithoutInstallationNestedInput
 }
 
 export type InstallationUncheckedUpdateManyWithoutUserInput = {
@@ -491,6 +569,35 @@ export type InstallationUncheckedUpdateManyWithoutUserInput = {
 }
 
 
+/**
+ * Count Type InstallationCountOutputType
+ */
+
+export type InstallationCountOutputType = {
+  principles: number
+}
+
+export type InstallationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  principles?: boolean | InstallationCountOutputTypeCountPrinciplesArgs
+}
+
+/**
+ * InstallationCountOutputType without action
+ */
+export type InstallationCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InstallationCountOutputType
+   */
+  select?: Prisma.InstallationCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * InstallationCountOutputType without action
+ */
+export type InstallationCountOutputTypeCountPrinciplesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PrincipleSetWhereInput
+}
+
 
 export type InstallationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -499,6 +606,8 @@ export type InstallationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   createdAt?: boolean
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  principles?: boolean | Prisma.Installation$principlesArgs<ExtArgs>
+  _count?: boolean | Prisma.InstallationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["installation"]>
 
 export type InstallationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -530,6 +639,8 @@ export type InstallationSelectScalar = {
 export type InstallationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "accountLogin" | "accountType" | "createdAt" | "userId", ExtArgs["result"]["installation"]>
 export type InstallationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  principles?: boolean | Prisma.Installation$principlesArgs<ExtArgs>
+  _count?: boolean | Prisma.InstallationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type InstallationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -542,6 +653,7 @@ export type $InstallationPayload<ExtArgs extends runtime.Types.Extensions.Intern
   name: "Installation"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
+    principles: Prisma.$PrincipleSetPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -944,6 +1056,7 @@ readonly fields: InstallationFieldRefs;
 export interface Prisma__InstallationClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  principles<T extends Prisma.Installation$principlesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Installation$principlesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PrincipleSetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1376,6 +1489,30 @@ export type InstallationDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Limit how many Installations to delete.
    */
   limit?: number
+}
+
+/**
+ * Installation.principles
+ */
+export type Installation$principlesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PrincipleSet
+   */
+  select?: Prisma.PrincipleSetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PrincipleSet
+   */
+  omit?: Prisma.PrincipleSetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PrincipleSetInclude<ExtArgs> | null
+  where?: Prisma.PrincipleSetWhereInput
+  orderBy?: Prisma.PrincipleSetOrderByWithRelationInput | Prisma.PrincipleSetOrderByWithRelationInput[]
+  cursor?: Prisma.PrincipleSetWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PrincipleSetScalarFieldEnum | Prisma.PrincipleSetScalarFieldEnum[]
 }
 
 /**

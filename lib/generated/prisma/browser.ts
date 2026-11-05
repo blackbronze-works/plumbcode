@@ -38,6 +38,11 @@ export type Account = Prisma.AccountModel
  */
 export type Installation = Prisma.InstallationModel
 /**
+ * Model PrincipleSet
+ * 
+ */
+export type PrincipleSet = Prisma.PrincipleSetModel
+/**
  * Model Verification
  * 
  */

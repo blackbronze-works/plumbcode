@@ -9,8 +9,10 @@ import { prisma } from "@/lib/prisma";
 // 32-bit integer, so reject anything that cannot fit before touching the DB.
 const MAX_INSTALLATION_ID = 2_147_483_647;
 
-function dashboardRedirect(req: Request, error?: InstallationErrorCode) {
-  const url = new URL("/dashboard", req.url);
+// Every outcome lands on the complete page. It signals the dashboard when the
+// flow ran in a popup and falls back to a normal redirect otherwise.
+function completeRedirect(req: Request, error?: InstallationErrorCode) {
+  const url = new URL("/github/complete", req.url);
   if (error) url.searchParams.set("error", error);
   return NextResponse.redirect(url);
 }
@@ -35,14 +37,13 @@ async function findUserInstallation(
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const rawInstallationId = url.searchParams.get("installation_id");
-  const dashboard = new URL("/dashboard", req.url);
 
-  if (!rawInstallationId) return NextResponse.redirect(dashboard);
+  if (!rawInstallationId) return completeRedirect(req);
 
   // Installation IDs are positive integers. Reject signs, decimals, and
   // exponent notation before converting.
   if (!/^\d+$/.test(rawInstallationId)) {
-    return dashboardRedirect(req, "installation_not_found");
+    return completeRedirect(req, "installation_not_found");
   }
 
   const installationId = Number(rawInstallationId);
@@ -51,7 +52,7 @@ export async function GET(req: Request) {
     installationId <= 0 ||
     installationId > MAX_INSTALLATION_ID
   ) {
-    return dashboardRedirect(req, "installation_not_found");
+    return completeRedirect(req, "installation_not_found");
   }
 
   const requestHeaders = await headers();
@@ -62,7 +63,7 @@ export async function GET(req: Request) {
     console.error(
       "GitHub install callback: NEXT_PUBLIC_GITHUB_APP_SLUG is not set",
     );
-    return dashboardRedirect(req, "github_app_not_configured");
+    return completeRedirect(req, "github_app_not_configured");
   }
 
   // Find the GitHub account linked to the signed-in Plumbcode user.
@@ -79,11 +80,11 @@ export async function GET(req: Request) {
       "GitHub install callback: account lookup failed",
       error instanceof Error ? error.message : "unknown error",
     );
-    return dashboardRedirect(req, "github_verification_failed");
+    return completeRedirect(req, "github_verification_failed");
   }
 
   if (!githubAccount) {
-    return dashboardRedirect(req, "github_not_linked");
+    return completeRedirect(req, "github_not_linked");
   }
 
   // Better Auth refreshes the token when possible. We pass the local account
@@ -96,7 +97,7 @@ export async function GET(req: Request) {
     });
 
     if (!token.accessToken) {
-      return dashboardRedirect(req, "github_token_invalid");
+      return completeRedirect(req, "github_token_invalid");
     }
 
     accessToken = token.accessToken;
@@ -105,7 +106,7 @@ export async function GET(req: Request) {
       "GitHub install callback: token lookup failed",
       error instanceof Error ? error.message : "unknown error",
     );
-    return dashboardRedirect(req, "github_token_invalid");
+    return completeRedirect(req, "github_token_invalid");
   }
 
   // Never trust installation_id on its own. Ask GitHub, using the user's own
@@ -118,13 +119,13 @@ export async function GET(req: Request) {
       console.error(
         "GitHub install callback: GitHub rejected the user access token",
       );
-      return dashboardRedirect(req, "github_token_invalid");
+      return completeRedirect(req, "github_token_invalid");
     }
     console.error(
       "GitHub install callback: GitHub request failed",
       error instanceof Error ? error.message : "unknown error",
     );
-    return dashboardRedirect(req, "github_verification_failed");
+    return completeRedirect(req, "github_verification_failed");
   }
 
   if (!match || match.app_slug !== GITHUB_APP_SLUG) {
@@ -133,7 +134,7 @@ export async function GET(req: Request) {
         `GitHub install callback: installation ${installationId} belongs to app "${match.app_slug}", expected "${GITHUB_APP_SLUG}"`,
       );
     }
-    return dashboardRedirect(req, "installation_not_found");
+    return completeRedirect(req, "installation_not_found");
   }
 
   const account = match.account as
@@ -150,7 +151,7 @@ export async function GET(req: Request) {
     // This version has a single owner per installation. A teammate with
     // access to an org install must not silently "claim" an existing row.
     if (existing && existing.userId !== session.user.id) {
-      return dashboardRedirect(req, "installation_already_linked");
+      return completeRedirect(req, "installation_already_linked");
     }
 
     await prisma.installation.upsert({
@@ -171,8 +172,8 @@ export async function GET(req: Request) {
       "GitHub install callback: database write failed",
       error instanceof Error ? error.message : "unknown error",
     );
-    return dashboardRedirect(req, "installation_save_failed");
+    return completeRedirect(req, "installation_save_failed");
   }
 
-  return NextResponse.redirect(dashboard);
+  return completeRedirect(req);
 }

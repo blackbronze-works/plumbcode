@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import InstallationsSection from "@/components/dashboard/InstallationsSection";
+import DashboardSkeleton from "@/components/skeletons/DashboardSkeleton";
 import { isInstallationErrorCode } from "@/lib/github-app";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/session";
@@ -11,9 +13,19 @@ type DashboardPageProps = {
   searchParams: Promise<{ error?: string | string[] }>;
 };
 
-export default async function DashboardPage({
-  searchParams,
-}: DashboardPageProps) {
+export default function DashboardPage({ searchParams }: DashboardPageProps) {
+  return (
+    <div className="max-w-4xl">
+      {/* The session and installation data stream in behind a skeleton so
+          navigations between dashboard pages stay instant. */}
+      <Suspense fallback={<DashboardSkeleton />}>
+        <DashboardContent searchParams={searchParams} />
+      </Suspense>
+    </div>
+  );
+}
+
+async function DashboardContent({ searchParams }: DashboardPageProps) {
   // The layout enforces auth. Calling the cached helper here only gives this
   // page the user id without a second Better Auth lookup.
   const session = await requireSession();
@@ -42,7 +54,7 @@ export default async function DashboardPage({
   const firstName = session.user.name.split(" ")[0] || session.user.name;
 
   return (
-    <div className="max-w-4xl">
+    <>
       <header>
         <h1 className="font-barabara text-3xl tracking-tight text-neutral-950 dark:text-white">
           Welcome back, {firstName}
@@ -59,6 +71,6 @@ export default async function DashboardPage({
         hasGitHubAccount={Boolean(githubAccount)}
         errorCode={isInstallationErrorCode(rawError) ? rawError : null}
       />
-    </div>
+    </>
   );
 }

@@ -8,13 +8,13 @@ datasource db {
 }
 
 model User {
-  id            String    @id
+  id            String         @id
   name          String
   email         String
-  emailVerified Boolean   @default(false)
+  emailVerified Boolean        @default(false)
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   sessions      Session[]
   accounts      Account[]
   installations Installation[]
@@ -68,8 +68,26 @@ model Installation {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  principles PrincipleSet[]
+
   @@index([userId])
   @@map("installation")
+}
+
+model PrincipleSet {
+  id             String   @id @default(cuid())
+  installationId Int
+  repoFullName   String // "owner/name"; "*" reserved for an installation-wide default
+  markdown       String
+  version        Int      @default(1)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  installation Installation @relation(fields: [installationId], references: [id], onDelete: Cascade)
+
+  @@unique([installationId, repoFullName])
+  @@index([installationId])
+  @@map("principle_set")
 }
 
 model Verification {

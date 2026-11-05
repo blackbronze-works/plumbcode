@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import SmoothScroll from "@/components/SmoothScroll";
 import ThemeProvider from "@/components/ThemeProvider";
+import NextTopLoader from "nextjs-toploader";
 
 const cabin = Cabin({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          <NextTopLoader color="#ffffff" showSpinner={false} />
           <SmoothScroll>{children}</SmoothScroll>
         </ThemeProvider>
       </body>
