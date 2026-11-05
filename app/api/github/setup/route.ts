@@ -3,11 +3,8 @@ import { NextResponse } from "next/server";
 import { Octokit, RequestError } from "octokit";
 import { auth } from "@/lib/auth";
 import { GITHUB_APP_SLUG, type InstallationErrorCode } from "@/lib/github-app";
+import { MAX_INSTALLATION_ID } from "@/lib/github-app-auth";
 import { prisma } from "@/lib/prisma";
-
-// GitHub installation IDs are int64 in the API. Prisma stores them as a
-// 32-bit integer, so reject anything that cannot fit before touching the DB.
-const MAX_INSTALLATION_ID = 2_147_483_647;
 
 // Every outcome lands on the complete page. It signals the dashboard when the
 // flow ran in a popup and falls back to a normal redirect otherwise.

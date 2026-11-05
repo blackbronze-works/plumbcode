@@ -4,12 +4,6 @@ import Breadcrumbs from "@/components/ui/breadcrumb";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { requireSession } from "@/lib/session";
 
-// The whole segment is auth-gated: the session (a cookies() read) must resolve
-// before any dashboard UI renders, so this route intentionally blocks on the
-// server instead of streaming a shell. See the Cache Components auth guide:
-// https://nextjs.org/docs/app/guides/authentication-with-cache-components
-export const instant = false;
-
 export default async function DashboardLayout({
   children,
 }: {
@@ -47,11 +41,9 @@ export default async function DashboardLayout({
             />
           </div>
 
-          {/* Consistent gutter at every breakpoint; the extra mobile start
-              padding on the breadcrumb clears the floating menu button. */}
-          <div className="relative z-10 h-full overflow-y-auto overflow-x-hidden p-3 sm:p-4 md:p-6">
-            <Breadcrumbs className="mb-6 pl-11 sm:pl-0" />
-            {children}
+          <div className="relative z-10 flex flex-col h-full overflow-y-auto overflow-x-hidden p-2 md:p-3">
+            <Breadcrumbs className="pl-11 sm:pl-0" />
+            <div className="flex-1 p-3 md:p-4">{children}</div>
           </div>
         </div>
       </main>

@@ -136,85 +136,85 @@ async function RepositoriesContent() {
         </div>
       )}
 
-      <ul
-        className={`${repos.length === 0 ? "hidden" : "mt-8"} grid gap-4 sm:grid-cols-2`}
-      >
-        {repos.map((repo) => {
-          const markdown = markdownByRepo.get(
-            `${repo.installationId}:${repo.fullName}`,
-          );
-          const parsed = markdown ? parsePrinciples(markdown) : null;
-          const rules = parsed?.rules ?? [];
-          const needsAttention = parsed ? !parsed.ok : false;
+      {repos.length > 0 && (
+        <ul className="mt-8 grid gap-4 sm:grid-cols-2">
+          {repos.map((repo) => {
+            const markdown = markdownByRepo.get(
+              `${repo.installationId}:${repo.fullName}`,
+            );
+            const parsed = markdown ? parsePrinciples(markdown) : null;
+            const rules = parsed?.rules ?? [];
+            const needsAttention = parsed ? !parsed.ok : false;
 
-          return (
-            <li
-              key={`${repo.installationId}:${repo.id}`}
-              className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-5 dark:border-white/10 dark:bg-neutral-950"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <h2 className="min-w-0 truncate font-sans text-base font-semibold text-neutral-950 dark:text-white">
-                  {repo.fullName}
-                </h2>
-                <span className="shrink-0 rounded-full border border-neutral-200 px-2 py-0.5 font-sans text-xs text-neutral-600 dark:border-white/10 dark:text-neutral-400">
-                  {repo.isPrivate ? "Private" : "Public"}
-                </span>
-              </div>
+            return (
+              <li
+                key={`${repo.installationId}:${repo.id}`}
+                className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-5 dark:border-white/10 dark:bg-neutral-950"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <h2 className="min-w-0 truncate font-sans text-base font-semibold text-neutral-950 dark:text-white">
+                    {repo.fullName}
+                  </h2>
+                  <span className="shrink-0 rounded-full border border-neutral-200 px-2 py-0.5 font-sans text-xs text-neutral-600 dark:border-white/10 dark:text-neutral-400">
+                    {repo.isPrivate ? "Private" : "Public"}
+                  </span>
+                </div>
 
-              <div className="mt-4 flex-1">
-                {rules.length > 0 ? (
-                  <>
-                    <p className="font-sans text-xs font-medium uppercase tracking-widest text-neutral-500">
-                      {rules.length} principle{rules.length === 1 ? "" : "s"}
-                    </p>
-
-                    <ul className="mt-2 space-y-1.5">
-                      {rules.slice(0, 3).map((rule) => (
-                        <li
-                          key={rule.id}
-                          className="flex gap-2 font-sans text-sm text-neutral-700 dark:text-neutral-300"
-                        >
-                          <span className="shrink-0 font-mono text-xs leading-5 text-emerald-600 dark:text-emerald-400">
-                            {rule.id}
-                          </span>
-                          <span className="min-w-0 truncate">{rule.text}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    {rules.length > 3 && (
-                      <p className="mt-2 font-sans text-xs text-neutral-500">
-                        +{rules.length - 3} more
+                <div className="mt-4 flex-1">
+                  {rules.length > 0 ? (
+                    <>
+                      <p className="font-sans text-xs font-medium uppercase tracking-widest text-neutral-500">
+                        {rules.length} principle{rules.length === 1 ? "" : "s"}
                       </p>
-                    )}
-                  </>
-                ) : (
-                  <p className="font-sans text-sm text-neutral-600 dark:text-neutral-400">
-                    No principles yet. Only commit messages are checked.
-                  </p>
-                )}
 
-                {needsAttention && (
-                  <p className="mt-3 font-sans text-xs text-amber-700 dark:text-amber-400">
-                    Saved rules need attention — open them to fix the format.
-                  </p>
-                )}
-              </div>
+                      <ul className="mt-2 space-y-1.5">
+                        {rules.slice(0, 3).map((rule) => (
+                          <li
+                            key={rule.id}
+                            className="flex gap-2 font-sans text-sm text-neutral-700 dark:text-neutral-300"
+                          >
+                            <span className="shrink-0 font-mono text-xs leading-5 text-emerald-600 dark:text-emerald-400">
+                              {rule.id}
+                            </span>
+                            <span className="min-w-0 truncate">{rule.text}</span>
+                          </li>
+                        ))}
+                      </ul>
 
-              <RepoPrinciplesDialog
-                installationId={repo.installationId}
-                repoFullName={repo.fullName}
-                initialRules={rules.map((rule) => rule.text)}
-                hasSavedRules={Boolean(markdown)}
-              />
-            </li>
-          );
-        })}
+                      {rules.length > 3 && (
+                        <p className="mt-2 font-sans text-xs text-neutral-500">
+                          +{rules.length - 3} more
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <p className="font-sans text-sm text-neutral-600 dark:text-neutral-400">
+                      No principles yet. Only commit messages are checked.
+                    </p>
+                  )}
 
-        <li className="flex">
-          <AddRepositoryCard url={addUrl} />
-        </li>
-      </ul>
+                  {needsAttention && (
+                    <p className="mt-3 font-sans text-xs text-amber-700 dark:text-amber-400">
+                      Saved rules need attention — open them to fix the format.
+                    </p>
+                  )}
+                </div>
+
+                <RepoPrinciplesDialog
+                  installationId={repo.installationId}
+                  repoFullName={repo.fullName}
+                  initialRules={rules.map((rule) => rule.text)}
+                  hasSavedRules={Boolean(markdown)}
+                />
+              </li>
+            );
+          })}
+
+          <li className="flex">
+            <AddRepositoryCard url={addUrl} />
+          </li>
+        </ul>
+      )}
     </>
   );
 }

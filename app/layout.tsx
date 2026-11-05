@@ -26,7 +26,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          <NextTopLoader color="#ffffff" showSpinner={false} />
+          <NextTopLoader color="#10b981" showSpinner={false} />
           <SmoothScroll>{children}</SmoothScroll>
         </ThemeProvider>
       </body>
