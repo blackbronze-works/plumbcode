@@ -2,6 +2,13 @@ import { after } from "next/server";
 import { getGithubApp, type GithubApp } from "@/lib/github-app-auth";
 import { handleGithubWebhook } from "@/lib/github-webhook";
 
+const RECEIPT_LOG_ACTIONS = new Set([
+  "pull_request",
+  "installation",
+  "installation_repositories",
+  "ping",
+]);
+
 // The review pipeline uses Node APIs (crypto for the GitHub App JWT) and makes
 // long-running GitHub and model requests. Route handlers use the Node.js
 // runtime by default, which is what those APIs require.
@@ -68,6 +75,18 @@ function readWebhook(
         ok: false,
         response: json({ error: "invalid_json" }, 400),
       };
+    }
+
+    // Log webhook receipt for observability
+    const action = (payload as Record<string, unknown> | null)?.action;
+    if (RECEIPT_LOG_ACTIONS.has(event) && typeof action === "string") {
+      console.info(
+        `GitHub webhook ${deliveryId}: received ${event}.${action}`,
+      );
+    } else if (RECEIPT_LOG_ACTIONS.has(event)) {
+      console.info(
+        `GitHub webhook ${deliveryId}: received ${event}`,
+      );
     }
 
     return { ok: true, event, deliveryId, payload };

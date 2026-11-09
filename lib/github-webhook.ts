@@ -10,6 +10,10 @@ const REVIEW_ACTIONS = new Set([
   "reopened",
   "synchronize",
   "ready_for_review",
+  "review_requested",
+  "review_request_removed",
+  "labeled",
+  "unlabeled",
 ]);
 
 function isObject(value: unknown): value is JsonObject {
@@ -293,7 +297,12 @@ async function handlePullRequestEvent({
   payload: JsonObject;
   deliveryId: string;
 }) {
-  if (!REVIEW_ACTIONS.has(action)) return;
+  if (!REVIEW_ACTIONS.has(action)) {
+    console.info(
+      `GitHub webhook ${deliveryId}: pull_request.${action} not a review action, skipping`,
+    );
+    return;
+  }
 
   const installationId = readInstallationId(payload);
   const repository = objectAt(payload, "repository");
@@ -304,27 +313,60 @@ async function handlePullRequestEvent({
   const headSha = stringAt(objectAt(pullRequest, "head"), "sha");
   const state = stringAt(pullRequest, "state");
 
-  if (
-    installationId === null ||
-    !owner ||
-    !repo ||
-    pullNumber === null ||
-    !headSha ||
-    (state !== null && state !== "open")
-  ) {
+  // Detailed validation with logging for each failure reason
+  if (installationId === null) {
     console.warn(
-      `GitHub webhook ${deliveryId}: pull_request.${action} payload is invalid`,
+      `GitHub webhook ${deliveryId}: pull_request.${action} missing installation id, skipping`,
+    );
+    return;
+  }
+  if (!owner) {
+    console.warn(
+      `GitHub webhook ${deliveryId}: pull_request.${action} missing repository owner, skipping`,
+    );
+    return;
+  }
+  if (!repo) {
+    console.warn(
+      `GitHub webhook ${deliveryId}: pull_request.${action} missing repository name, skipping`,
+    );
+    return;
+  }
+  if (pullNumber === null) {
+    console.warn(
+      `GitHub webhook ${deliveryId}: pull_request.${action} missing pull number, skipping`,
+    );
+    return;
+  }
+  if (!headSha) {
+    console.warn(
+      `GitHub webhook ${deliveryId}: pull_request.${action} missing head SHA, skipping`,
+    );
+    return;
+  }
+  if (state !== null && state !== "open") {
+    console.info(
+      `GitHub webhook ${deliveryId}: pull_request.${action} state="${state}" not open, skipping`,
     );
     return;
   }
 
-  // Review drafts when they are marked ready, not while they are still in
-  // progress. Synchronize events for drafts are skipped for the same reason.
-  if (pullRequest?.draft === true) return;
+  // Skip draft PRs - review when marked ready_for_review
+  if (pullRequest?.draft === true) {
+    console.info(
+      `GitHub webhook ${deliveryId}: pull_request.${action} PR #${pullNumber} is draft, skipping`,
+    );
+    return;
+  }
 
-  // Dependabot, Renovate, and other bots can produce a lot of pull requests.
-  // Skipping them keeps model usage predictable.
-  if (stringAt(objectAt(pullRequest, "user"), "type") === "Bot") return;
+  // Skip bot PRs (Dependabot, Renovate, etc.)
+  const userType = stringAt(objectAt(pullRequest, "user"), "type");
+  if (userType === "Bot") {
+    console.info(
+      `GitHub webhook ${deliveryId}: pull_request.${action} PR #${pullNumber} from bot, skipping`,
+    );
+    return;
+  }
 
   const prTitle = stringAt(pullRequest, "title");
   const additions =
@@ -343,9 +385,26 @@ async function handlePullRequestEvent({
   });
 
   if (!installation) {
-    console.info(
-      `GitHub webhook ${deliveryId}: installation ${installationId} is not linked to Plumbcode, skipping review`,
-    );
+    // Attempt to auto-link the installation using the sender from the webhook
+    const senderId = githubUserId(payload.sender);
+    if (senderId) {
+      console.info(
+        `GitHub webhook ${deliveryId}: installation ${installationId} not linked, attempting auto-link via sender ${senderId}`,
+      );
+      // Re-read installation details for linking
+      const installationDetails = readInstallation(payload);
+      if (installationDetails) {
+        await linkInstallation({
+          ...installationDetails,
+          senderId,
+          deliveryId,
+        });
+      }
+    } else {
+      console.info(
+        `GitHub webhook ${deliveryId}: installation ${installationId} is not linked to Plumbcode and no sender ID available, skipping review`,
+      );
+    }
     return;
   }
 
