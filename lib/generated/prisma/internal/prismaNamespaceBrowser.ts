@@ -56,6 +56,8 @@ export const ModelName = {
   Account: 'Account',
   Installation: 'Installation',
   PrincipleSet: 'PrincipleSet',
+  Review: 'Review',
+  ReviewFinding: 'ReviewFinding',
   Verification: 'Verification'
 } as const
 
@@ -143,6 +145,43 @@ export const PrincipleSetScalarFieldEnum = {
 } as const
 
 export type PrincipleSetScalarFieldEnum = (typeof PrincipleSetScalarFieldEnum)[keyof typeof PrincipleSetScalarFieldEnum]
+
+
+export const ReviewScalarFieldEnum = {
+  id: 'id',
+  installationId: 'installationId',
+  repoFullName: 'repoFullName',
+  prNumber: 'prNumber',
+  prTitle: 'prTitle',
+  headSha: 'headSha',
+  additions: 'additions',
+  deletions: 'deletions',
+  changedFiles: 'changedFiles',
+  commitsChecked: 'commitsChecked',
+  commitsSkipped: 'commitsSkipped',
+  rulesChecked: 'rulesChecked',
+  findingCount: 'findingCount',
+  createdAt: 'createdAt'
+} as const
+
+export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
+
+
+export const ReviewFindingScalarFieldEnum = {
+  id: 'id',
+  reviewId: 'reviewId',
+  repoFullName: 'repoFullName',
+  source: 'source',
+  ruleId: 'ruleId',
+  ruleText: 'ruleText',
+  commitSha: 'commitSha',
+  severity: 'severity',
+  title: 'title',
+  file: 'file',
+  line: 'line'
+} as const
+
+export type ReviewFindingScalarFieldEnum = (typeof ReviewFindingScalarFieldEnum)[keyof typeof ReviewFindingScalarFieldEnum]
 
 
 export const VerificationScalarFieldEnum = {

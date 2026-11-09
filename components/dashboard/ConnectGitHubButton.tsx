@@ -7,8 +7,10 @@ import { authClient } from "@/lib/auth-client";
 
 export default function ConnectGitHubButton({
   label = "Connect GitHub",
+  callbackURL = "/dashboard",
 }: {
   label?: string;
+  callbackURL?: string;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -20,7 +22,7 @@ export default function ConnectGitHubButton({
     try {
       const { error } = await authClient.linkSocial({
         provider: "github",
-        callbackURL: "/dashboard",
+        callbackURL,
       });
 
       if (error) {

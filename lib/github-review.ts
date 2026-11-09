@@ -11,6 +11,7 @@ import {
 import { runPrinciplesCheck } from "@/lib/checks/principles";
 import type { Finding } from "@/lib/checks/types";
 import { loadRules } from "@/lib/principles-store";
+import { saveReview } from "@/lib/reviews";
 
 const CHECK_NAME = "Plumbcode";
 const COMMENT_MARKER = "<!-- plumbcode-review -->";
@@ -52,6 +53,7 @@ type PullRequestFile = {
 type PullRequestCommit = {
   sha: string;
   message: string;
+  parents: number;
 };
 
 type ReviewInput = {
@@ -62,6 +64,10 @@ type ReviewInput = {
   pullNumber: number;
   headSha: string;
   deliveryId: string;
+  prTitle: string | null;
+  additions: number;
+  deletions: number;
+  changedFileCount: number | null;
 };
 
 function errorMessage(error: unknown): string {
@@ -257,6 +263,7 @@ async function fetchPullCommits(
   return commits.map((commit) => ({
     sha: commit.sha,
     message: commit.commit.message,
+    parents: commit.parents.length,
   }));
 }
 
@@ -266,7 +273,10 @@ async function fetchCommitInputs(
   repo: string,
   commits: PullRequestCommit[],
 ): Promise<{ inputs: CommitInput[]; skipped: number }> {
-  const selected = commits.slice(-MAX_COMMITS);
+  // Merge commits have no single meaningful diff against a message, and the
+  // change they introduce is already covered by the commits they merge.
+  const eligible = commits.filter((commit) => commit.parents <= 1);
+  const selected = eligible.slice(-MAX_COMMITS);
 
   const results = await Promise.allSettled(
     selected.map(async (commit) => {
@@ -522,11 +532,6 @@ export async function reviewPullRequest(input: ReviewInput): Promise<void> {
     }
 
     const notes: string[] = [];
-    if (rules.length === 0) {
-      notes.push(
-        "No principles are configured for this repository, so only commit messages were checked.",
-      );
-    }
     if (diff.truncated) {
       notes.push(
         "The diff was too large, so the principles check only saw part of it.",
@@ -534,7 +539,7 @@ export async function reviewPullRequest(input: ReviewInput): Promise<void> {
     }
     if (commitReview.skipped > 0) {
       notes.push(
-        `${commitReview.skipped} commit${commitReview.skipped === 1 ? "" : "s"} were not checked because the pull request has too many commits or a commit diff couldn't be loaded.`,
+        `${commitReview.skipped} commit${commitReview.skipped === 1 ? "" : "s"} were not checked because they were merge commits, the pull request has too many commits, or a commit diff couldn't be loaded.`,
       );
     }
 
@@ -583,7 +588,7 @@ export async function reviewPullRequest(input: ReviewInput): Promise<void> {
         repo: input.repo,
         issueNumber: input.pullNumber,
         body,
-        createIfMissing: findings.length > 0 || failures.length > 0,
+        createIfMissing: true,
       }),
     ]);
 
@@ -595,6 +600,31 @@ export async function reviewPullRequest(input: ReviewInput): Promise<void> {
         );
       }
     });
+
+    // The GitHub output is already published, so a database failure must never
+    // turn a successful review into a webhook failure. A redelivery for the
+    // same head SHA replaces the stored findings through the unique key.
+    try {
+      await saveReview({
+        installationId: input.installationId,
+        repoFullName,
+        prNumber: input.pullNumber,
+        prTitle: input.prTitle,
+        headSha: input.headSha,
+        additions: input.additions,
+        deletions: input.deletions,
+        changedFiles: input.changedFileCount ?? files.length,
+        commitsChecked: commitReview.inputs.length,
+        commitsSkipped: commitReview.skipped,
+        rules,
+        findings,
+      });
+    } catch (error) {
+      console.error(
+        `Plumbcode: could not save review (${input.deliveryId})`,
+        errorMessage(error),
+      );
+    }
   } catch (error) {
     console.error(
       `Plumbcode: review failed (${input.deliveryId})`,

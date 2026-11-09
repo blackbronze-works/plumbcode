@@ -223,7 +223,7 @@ export default function Sidebar({
                 onClick={toggleCollapse}
                 aria-label="Collapse sidebar"
               >
-                <PanelLeftOpen size={18} strokeWidth={2.5} />
+                <PanelLeftClose size={18} strokeWidth={2.5} />
               </Button>
             </motion.div>
           )}
@@ -320,7 +320,7 @@ export default function Sidebar({
                   onClick={toggleCollapse}
                   aria-label="Collapse sidebar"
                 >
-                  <PanelLeftClose size={18} strokeWidth={2.5} />
+                  <PanelLeftOpen size={18} strokeWidth={2.5} />
                   <span className="pointer-events-none absolute left-full top-1/2 z-50 ml-3 -translate-y-1/2 whitespace-nowrap rounded-lg bg-neutral-950 px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 dark:bg-white dark:text-neutral-950">
                     Expand
                   </span>

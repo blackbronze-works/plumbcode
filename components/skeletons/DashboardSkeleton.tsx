@@ -8,32 +8,25 @@ export default function DashboardSkeleton() {
         <Skeleton className="h-4 w-96 max-w-full" />
       </div>
 
-      <div className="mt-10">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div className="space-y-2">
-            <Skeleton className="h-6 w-52 max-w-full" />
-            <Skeleton className="h-4 w-80 max-w-full" />
-          </div>
-          <Skeleton className="h-4 w-44 max-w-full" />
+      <div className="mt-8 space-y-4">
+        <div className="flex items-baseline justify-between gap-3">
+          <Skeleton className="h-6 w-28" />
+          <Skeleton className="h-3 w-20" />
         </div>
 
-        <div className="mt-6 space-y-2">
-          {[0, 1].map((index) => (
-            <div
-              key={index}
-              className="flex flex-col gap-3 rounded-2xl border border-neutral-200 bg-white p-4 sm:flex-row sm:items-center dark:border-white/10 dark:bg-neutral-950"
-            >
-              <div className="flex min-w-0 flex-1 items-center gap-3">
-                <Skeleton className="size-10 shrink-0 rounded-xl" />
-                <div className="min-w-0 flex-1 space-y-2">
-                  <Skeleton className="h-4 w-44 max-w-full" />
-                  <Skeleton className="h-3 w-24" />
-                </div>
-              </div>
-              <Skeleton className="h-6 w-24 shrink-0 rounded-full" />
-            </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[0, 1, 2, 3].map((index) => (
+            <Skeleton key={index} className="h-36 rounded-2xl" />
           ))}
         </div>
+
+        <div className="grid gap-4 lg:grid-cols-3">
+          <Skeleton className="h-64 rounded-2xl lg:col-span-2" />
+          <Skeleton className="h-64 rounded-2xl" />
+        </div>
+
+        <Skeleton className="h-44 rounded-2xl" />
+        <Skeleton className="h-56 rounded-2xl" />
       </div>
 
       <span className="sr-only">Loading dashboard…</span>

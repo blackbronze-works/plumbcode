@@ -5,23 +5,31 @@ const CARD =
 
 export default function RepositoriesSkeleton() {
   return (
-    <div role="status" className="mt-8">
-      <ul className="grid gap-4 sm:grid-cols-2">
+    <div role="status" className="mt-6">
+      <Skeleton className="h-3 w-40 max-w-full" />
+
+      <ul className="mt-3 grid gap-4 sm:grid-cols-2">
         {[0, 1].map((index) => (
           <li key={index} className={CARD}>
-            <div className="flex items-start justify-between gap-3">
-              <Skeleton className="h-5 w-40 max-w-full" />
+            <div className="flex items-start gap-3">
+              <Skeleton className="size-10 shrink-0 rounded-xl" />
+
+              <div className="min-w-0 flex-1 space-y-2">
+                <Skeleton className="h-5 w-40 max-w-full" />
+                <Skeleton className="h-3 w-36 max-w-full" />
+              </div>
+
               <Skeleton className="h-5 w-14 shrink-0 rounded-full" />
             </div>
 
-            <div className="mt-4 space-y-2">
-              <Skeleton className="h-4 w-28" />
+            <div className="mt-5 flex-1 space-y-2 border-t border-neutral-200 pt-4 dark:border-white/10">
+              <Skeleton className="h-4 w-32 max-w-full" />
               <Skeleton className="h-4 w-full" />
               <Skeleton className="h-4 w-4/5" />
-              <Skeleton className="h-4 w-2/3" />
             </div>
 
-            <Skeleton className="mt-5 h-9 w-32 rounded-lg" />
+            <Skeleton className="mt-4 h-3 w-52 max-w-full" />
+            <Skeleton className="mt-5 h-10 w-full rounded-full" />
           </li>
         ))}
       </ul>

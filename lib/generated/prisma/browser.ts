@@ -43,6 +43,16 @@ export type Installation = Prisma.InstallationModel
  */
 export type PrincipleSet = Prisma.PrincipleSetModel
 /**
+ * Model Review
+ * 
+ */
+export type Review = Prisma.ReviewModel
+/**
+ * Model ReviewFinding
+ * 
+ */
+export type ReviewFinding = Prisma.ReviewFindingModel
+/**
  * Model Verification
  * 
  */

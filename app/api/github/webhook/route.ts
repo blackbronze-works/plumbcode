@@ -3,8 +3,8 @@ import { getGithubApp, type GithubApp } from "@/lib/github-app-auth";
 import { handleGithubWebhook } from "@/lib/github-webhook";
 
 // The review pipeline uses Node APIs (crypto for the GitHub App JWT) and makes
-// long-running GitHub and model requests.
-export const runtime = "nodejs";
+// long-running GitHub and model requests. Route handlers use the Node.js
+// runtime by default, which is what those APIs require.
 export const maxDuration = 300;
 
 function json(body: Record<string, unknown>, status: number) {

@@ -4,6 +4,12 @@ import Breadcrumbs from "@/components/ui/breadcrumb";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { requireSession } from "@/lib/session";
 
+// The whole segment is auth-gated: the session (a cookies() read) must resolve
+// before any dashboard UI renders, so this route intentionally blocks on the
+// server instead of streaming a shell. See the Cache Components auth guide:
+// https://nextjs.org/docs/app/guides/authentication-with-cache-components
+export const instant = false;
+
 export default async function DashboardLayout({
   children,
 }: {
@@ -15,7 +21,7 @@ export default async function DashboardLayout({
     <div className="flex h-dvh w-full overflow-hidden dark:bg-neutral-900">
       <Sidebar userName={session.user.name} userEmail={session.user.email} />
 
-      <main className="relative z-10 min-w-0 flex-1 p-2 pl-2 md:pl-0">
+      <main className="relative z-10 min-w-0 flex-1 p-2 md:pl-0">
         <div className="relative h-full w-full overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-100 text-neutral-950 dark:border-white/10 dark:bg-neutral-950/80 dark:text-white">
           {/* Decorative background: sand texture + corner logo */}
           <div

@@ -69,6 +69,7 @@ model Installation {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   principles PrincipleSet[]
+  reviews    Review[]
 
   @@index([userId])
   @@map("installation")
@@ -88,6 +89,49 @@ model PrincipleSet {
   @@unique([installationId, repoFullName])
   @@index([installationId])
   @@map("principle_set")
+}
+
+model Review {
+  id             String   @id @default(cuid())
+  installationId Int
+  repoFullName   String // "owner/name"
+  prNumber       Int
+  prTitle        String
+  headSha        String
+  additions      Int      @default(0)
+  deletions      Int      @default(0)
+  changedFiles   Int      @default(0)
+  commitsChecked Int      @default(0)
+  commitsSkipped Int      @default(0)
+  rulesChecked   Int      @default(0)
+  findingCount   Int      @default(0)
+  createdAt      DateTime @default(now())
+
+  installation Installation    @relation(fields: [installationId], references: [id], onDelete: Cascade)
+  findings     ReviewFinding[]
+
+  @@unique([installationId, repoFullName, prNumber, headSha])
+  @@index([installationId, createdAt])
+  @@map("review")
+}
+
+model ReviewFinding {
+  id           String  @id @default(cuid())
+  reviewId     String
+  repoFullName String // denormalized for direct repo-level queries
+  source       String // "principles" | "commit"
+  ruleId       String? // e.g. "Rule-2"
+  ruleText     String? // snapshot of the configured rule text
+  commitSha    String? // full SHA for commit-message findings
+  severity     String // "error" | "warning" | "info"
+  title        String // derived label, never the finding message
+  file         String?
+  line         Int?
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+  @@map("review_finding")
 }
 
 model Verification {

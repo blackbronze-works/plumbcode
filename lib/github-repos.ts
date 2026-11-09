@@ -1,6 +1,4 @@
-import { headers } from "next/headers";
-import { Octokit } from "octokit";
-import { auth } from "@/lib/auth";
+import { getGithubApp } from "@/lib/github-app-auth";
 
 export type RepoSummary = {
   id: number;
@@ -10,70 +8,27 @@ export type RepoSummary = {
   installationId: number;
 };
 
-export type GithubAuthResult =
-  | { ok: true; octokit: Octokit }
-  | { ok: false; error: "github_not_linked" | "github_token_invalid" };
-
 /**
- * Resolves an Octokit client for the signed-in user's GitHub App token. This
- * is the same account the install callback verified, so it only sees
- * installations the user can already access.
+ * Lists repositories through the GitHub App's installation token. This does not
+ * depend on the user's OAuth access token, which GitHub expires after a few
+ * hours. Callers must only pass installations owned by the signed-in user.
  */
-export async function getGithubUserAuth(): Promise<GithubAuthResult> {
-  const requestHeaders = await headers();
-
-  let githubAccount: { id: string; providerId: string } | undefined;
-
-  try {
-    const accounts = await auth.api.listUserAccounts({
-      headers: requestHeaders,
-    });
-    githubAccount = accounts.find(
-      (account) => account.providerId === "github",
-    );
-  } catch (error) {
-    console.error(
-      "Repositories: account lookup failed",
-      error instanceof Error ? error.message : "unknown error",
-    );
-    return { ok: false, error: "github_token_invalid" };
-  }
-
-  if (!githubAccount) {
-    return { ok: false, error: "github_not_linked" };
-  }
-
-  try {
-    // Better Auth refreshes the token when possible; pass the local account
-    // row ID, not GitHub's accountId.
-    const token = await auth.api.getAccessToken({
-      body: { accountId: githubAccount.id },
-      headers: requestHeaders,
-    });
-
-    if (!token.accessToken) {
-      return { ok: false, error: "github_token_invalid" };
-    }
-
-    return { ok: true, octokit: new Octokit({ auth: token.accessToken }) };
-  } catch (error) {
-    console.error(
-      "Repositories: token lookup failed",
-      error instanceof Error ? error.message : "unknown error",
-    );
-    return { ok: false, error: "github_token_invalid" };
-  }
-}
-
-// First 100 repositories per installation (paginated). Add a synced Repository
-// table when installations start exceeding that.
 export async function listInstallationRepos(
-  octokit: Octokit,
   installationId: number,
 ): Promise<RepoSummary[]> {
+  const app = getGithubApp();
+
+  if (!app) {
+    throw new Error("GitHub App is not configured");
+  }
+
+  const octokit = await app.getInstallationOctokit(installationId);
+
+  // GitHub returns at most 100 repositories per page; paginate() follows the
+  // Link headers so installations with more repositories are fully listed.
   const repositories = await octokit.paginate(
-    "GET /user/installations/{installation_id}/repositories",
-    { installation_id: installationId, per_page: 100 },
+    "GET /installation/repositories",
+    { per_page: 100 },
   );
 
   return repositories

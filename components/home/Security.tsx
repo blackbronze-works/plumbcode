@@ -40,7 +40,9 @@ const FLOW = [
   {
     title: "The model checks it",
     body: "Only that diff, those messages and your rules are sent to the model.",
-    badge: "No training on your code",
+    // Restore "No training on your code" once reviews run on a paid Gemini
+    // tier or another provider that does not train on customer data.
+    badge: null,
   },
   {
     title: "Findings go back to the PR",

@@ -2,9 +2,10 @@ import { Suspense } from "react";
 import { GitBranch } from "lucide-react";
 import AddRepositoryCard from "@/components/dashboard/AddRepositoryCard";
 import ConnectGitHubButton from "@/components/dashboard/ConnectGitHubButton";
-import RepoPrinciplesDialog from "@/components/dashboard/RepoPrinciplesDialog";
+import RepoCard from "@/components/dashboard/RepoCard";
 import RepositoriesSkeleton from "@/components/skeletons/RepositoriesSkeleton";
-import { getGithubUserAuth, listInstallationRepos } from "@/lib/github-repos";
+import { getRepoActivity } from "@/lib/dashboard-data";
+import { listInstallationRepos } from "@/lib/github-repos";
 import { getAddRepositoriesUrl } from "@/lib/github-urls";
 import { parsePrinciples } from "@/lib/principles";
 import { prisma } from "@/lib/prisma";
@@ -16,7 +17,7 @@ export const metadata = {
 
 export default function RepositoriesPage() {
   return (
-    <div className="max-w-4xl">
+    <div className="w-full">
       <h1 className="font-barabara text-3xl tracking-tight text-neutral-950 dark:text-white">
         Repositories
       </h1>
@@ -37,30 +38,29 @@ export default function RepositoriesPage() {
 async function RepositoriesContent() {
   const session = await requireSession();
 
-  const installations = await prisma.installation.findMany({
-    where: { userId: session.user.id },
-    orderBy: { createdAt: "desc" },
-    select: { id: true, accountLogin: true, accountType: true },
-  });
+  const [installations, githubAccount] = await Promise.all([
+    prisma.installation.findMany({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: "desc" },
+      select: { id: true, accountLogin: true, accountType: true },
+    }),
+    prisma.account.findFirst({
+      where: {
+        userId: session.user.id,
+        providerId: "github",
+      },
+      select: { id: true },
+    }),
+  ]);
 
-  const githubAuth = await getGithubUserAuth();
-
-  if (!githubAuth.ok) {
+  if (!githubAccount) {
     return (
       <>
         <p className="mt-2 max-w-md font-sans text-sm text-neutral-600 dark:text-neutral-400">
-          {githubAuth.error === "github_not_linked"
-            ? "Connect GitHub to load the repositories in your installations."
-            : "Your GitHub connection expired. Reconnect to load your repositories."}
+          Connect GitHub to load the repositories in your installations.
         </p>
         <div className="mt-4">
-          <ConnectGitHubButton
-            label={
-              githubAuth.error === "github_not_linked"
-                ? "Connect GitHub"
-                : "Reconnect GitHub"
-            }
-          />
+          <ConnectGitHubButton label="Connect GitHub" />
         </div>
       </>
     );
@@ -68,10 +68,10 @@ async function RepositoriesContent() {
 
   const installationIds = installations.map((installation) => installation.id);
 
-  const [repoResults, principleSets] = await Promise.all([
+  const [repoResults, principleSets, reviewActivity] = await Promise.all([
     Promise.allSettled(
       installations.map((installation) =>
-        listInstallationRepos(githubAuth.octokit, installation.id),
+        listInstallationRepos(installation.id),
       ),
     ),
     prisma.principleSet.findMany({
@@ -82,7 +82,24 @@ async function RepositoriesContent() {
         markdown: true,
       },
     }),
+    getRepoActivity(installationIds),
   ]);
+
+  repoResults.forEach((result, index) => {
+    if (result.status === "rejected") {
+      const installation = installations[index];
+      const reason = result.reason as {
+        status?: number;
+        message?: string;
+      };
+
+      console.error(
+        `Repositories: failed to list installation ${installation.id} (${installation.accountLogin})`,
+        `status=${reason?.status ?? "unknown"}`,
+        reason?.message ?? result.reason,
+      );
+    }
+  });
 
   const repos = repoResults
     .flatMap((result) => (result.status === "fulfilled" ? result.value : []))
@@ -99,6 +116,21 @@ async function RepositoriesContent() {
     ]),
   );
 
+  const cards = repos.map((repo) => {
+    const key = `${repo.installationId}:${repo.fullName}`;
+    const markdown = markdownByRepo.get(key);
+    const parsed = markdown ? parsePrinciples(markdown) : null;
+
+    return {
+      repo,
+      markdown,
+      rules: parsed?.rules ?? [],
+      needsAttention: parsed ? !parsed.ok : false,
+      activity: reviewActivity.get(key),
+    };
+  });
+
+  const totalRules = cards.reduce((sum, card) => sum + card.rules.length, 0);
   const addUrl = getAddRepositoriesUrl(installations);
 
   return (
@@ -124,96 +156,47 @@ async function RepositoriesContent() {
         </p>
       )}
 
-      {repos.length === 0 && (
+      {cards.length === 0 ? (
         <div className="mt-8 flex w-full flex-col items-center justify-center gap-3 rounded-2xl border border-neutral-200 bg-white p-10 text-center dark:border-white/10 dark:bg-neutral-950">
           <div className="flex size-10 items-center justify-center rounded-full border border-neutral-300 dark:border-white/20">
-            <GitBranch size={18} className="text-neutral-600 dark:text-neutral-400" />
+            <GitBranch
+              size={18}
+              className="text-neutral-600 dark:text-neutral-400"
+            />
           </div>
           <p className="font-sans text-sm text-neutral-600 dark:text-neutral-400">
             No repositories are connected yet.
           </p>
           <AddRepositoryCard url={addUrl} />
         </div>
-      )}
+      ) : (
+        <>
+          <p className="mt-6 font-sans text-xs font-medium uppercase tracking-widest text-neutral-500">
+            {cards.length} repositor{cards.length === 1 ? "y" : "ies"} ·{" "}
+            {totalRules} principle{totalRules === 1 ? "" : "s"}
+          </p>
 
-      {repos.length > 0 && (
-        <ul className="mt-8 grid gap-4 sm:grid-cols-2">
-          {repos.map((repo) => {
-            const markdown = markdownByRepo.get(
-              `${repo.installationId}:${repo.fullName}`,
-            );
-            const parsed = markdown ? parsePrinciples(markdown) : null;
-            const rules = parsed?.rules ?? [];
-            const needsAttention = parsed ? !parsed.ok : false;
-
-            return (
-              <li
-                key={`${repo.installationId}:${repo.id}`}
-                className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-5 dark:border-white/10 dark:bg-neutral-950"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <h2 className="min-w-0 truncate font-sans text-base font-semibold text-neutral-950 dark:text-white">
-                    {repo.fullName}
-                  </h2>
-                  <span className="shrink-0 rounded-full border border-neutral-200 px-2 py-0.5 font-sans text-xs text-neutral-600 dark:border-white/10 dark:text-neutral-400">
-                    {repo.isPrivate ? "Private" : "Public"}
-                  </span>
-                </div>
-
-                <div className="mt-4 flex-1">
-                  {rules.length > 0 ? (
-                    <>
-                      <p className="font-sans text-xs font-medium uppercase tracking-widest text-neutral-500">
-                        {rules.length} principle{rules.length === 1 ? "" : "s"}
-                      </p>
-
-                      <ul className="mt-2 space-y-1.5">
-                        {rules.slice(0, 3).map((rule) => (
-                          <li
-                            key={rule.id}
-                            className="flex gap-2 font-sans text-sm text-neutral-700 dark:text-neutral-300"
-                          >
-                            <span className="shrink-0 font-mono text-xs leading-5 text-emerald-600 dark:text-emerald-400">
-                              {rule.id}
-                            </span>
-                            <span className="min-w-0 truncate">{rule.text}</span>
-                          </li>
-                        ))}
-                      </ul>
-
-                      {rules.length > 3 && (
-                        <p className="mt-2 font-sans text-xs text-neutral-500">
-                          +{rules.length - 3} more
-                        </p>
-                      )}
-                    </>
-                  ) : (
-                    <p className="font-sans text-sm text-neutral-600 dark:text-neutral-400">
-                      No principles yet. Only commit messages are checked.
-                    </p>
-                  )}
-
-                  {needsAttention && (
-                    <p className="mt-3 font-sans text-xs text-amber-700 dark:text-amber-400">
-                      Saved rules need attention — open them to fix the format.
-                    </p>
-                  )}
-                </div>
-
-                <RepoPrinciplesDialog
+          <ul className="mt-3 grid gap-4 sm:grid-cols-2">
+            {cards.map(
+              ({ repo, markdown, rules, needsAttention, activity }) => (
+                <RepoCard
+                  key={`${repo.installationId}:${repo.id}`}
                   installationId={repo.installationId}
-                  repoFullName={repo.fullName}
-                  initialRules={rules.map((rule) => rule.text)}
+                  fullName={repo.fullName}
+                  isPrivate={repo.isPrivate}
+                  rules={rules}
                   hasSavedRules={Boolean(markdown)}
+                  needsAttention={needsAttention}
+                  activity={activity}
                 />
-              </li>
-            );
-          })}
+              ),
+            )}
 
-          <li className="flex">
-            <AddRepositoryCard url={addUrl} />
-          </li>
-        </ul>
+            <li className="flex">
+              <AddRepositoryCard url={addUrl} />
+            </li>
+          </ul>
+        </>
       )}
     </>
   );

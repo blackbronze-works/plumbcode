@@ -43,6 +43,20 @@ function positiveIntAt(value: unknown, key: string, max: number): number | null 
   return child;
 }
 
+function nonNegativeIntAt(
+  value: unknown,
+  key: string,
+  max: number,
+): number | null {
+  if (!isObject(value)) return null;
+
+  const child = value[key];
+  if (typeof child !== "number" || !Number.isSafeInteger(child)) return null;
+  if (child < 0 || child > max) return null;
+
+  return child;
+}
+
 function githubUserId(value: unknown): string | null {
   if (!isObject(value)) return null;
 
@@ -190,9 +204,11 @@ async function handleInstallationEvent({
       return;
     }
 
-    await prisma.installation.deleteMany({ where: { id } });
+    const result = await prisma.installation.deleteMany({ where: { id } });
     console.info(
-      `GitHub webhook ${deliveryId}: removed installation ${id} and its principles`,
+      result.count > 0
+        ? `GitHub webhook ${deliveryId}: removed installation ${id} and its principles`
+        : `GitHub webhook ${deliveryId}: installation ${id} was not linked, nothing to remove`,
     );
     return;
   }
@@ -306,6 +322,21 @@ async function handlePullRequestEvent({
   // progress. Synchronize events for drafts are skipped for the same reason.
   if (pullRequest?.draft === true) return;
 
+  // Dependabot, Renovate, and other bots can produce a lot of pull requests.
+  // Skipping them keeps model usage predictable.
+  if (stringAt(objectAt(pullRequest, "user"), "type") === "Bot") return;
+
+  const prTitle = stringAt(pullRequest, "title");
+  const additions =
+    nonNegativeIntAt(pullRequest, "additions", 2_147_483_647) ?? 0;
+  const deletions =
+    nonNegativeIntAt(pullRequest, "deletions", 2_147_483_647) ?? 0;
+  const changedFileCount = nonNegativeIntAt(
+    pullRequest,
+    "changed_files",
+    2_147_483_647,
+  );
+
   const installation = await prisma.installation.findUnique({
     where: { id: installationId },
     select: { id: true },
@@ -326,6 +357,10 @@ async function handlePullRequestEvent({
     pullNumber,
     headSha,
     deliveryId,
+    prTitle,
+    additions,
+    deletions,
+    changedFileCount,
   });
 }
 

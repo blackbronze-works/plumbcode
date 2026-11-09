@@ -218,6 +218,7 @@ export type InstallationWhereInput = {
   userId?: Prisma.StringFilter<"Installation"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   principles?: Prisma.PrincipleSetListRelationFilter
+  reviews?: Prisma.ReviewListRelationFilter
 }
 
 export type InstallationOrderByWithRelationInput = {
@@ -228,6 +229,7 @@ export type InstallationOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   principles?: Prisma.PrincipleSetOrderByRelationAggregateInput
+  reviews?: Prisma.ReviewOrderByRelationAggregateInput
 }
 
 export type InstallationWhereUniqueInput = Prisma.AtLeast<{
@@ -241,6 +243,7 @@ export type InstallationWhereUniqueInput = Prisma.AtLeast<{
   userId?: Prisma.StringFilter<"Installation"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   principles?: Prisma.PrincipleSetListRelationFilter
+  reviews?: Prisma.ReviewListRelationFilter
 }, "id">
 
 export type InstallationOrderByWithAggregationInput = {
@@ -274,6 +277,7 @@ export type InstallationCreateInput = {
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutInstallationsInput
   principles?: Prisma.PrincipleSetCreateNestedManyWithoutInstallationInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutInstallationInput
 }
 
 export type InstallationUncheckedCreateInput = {
@@ -283,6 +287,7 @@ export type InstallationUncheckedCreateInput = {
   createdAt?: Date | string
   userId: string
   principles?: Prisma.PrincipleSetUncheckedCreateNestedManyWithoutInstallationInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutInstallationInput
 }
 
 export type InstallationUpdateInput = {
@@ -292,6 +297,7 @@ export type InstallationUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutInstallationsNestedInput
   principles?: Prisma.PrincipleSetUpdateManyWithoutInstallationNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutInstallationNestedInput
 }
 
 export type InstallationUncheckedUpdateInput = {
@@ -301,6 +307,7 @@ export type InstallationUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   principles?: Prisma.PrincipleSetUncheckedUpdateManyWithoutInstallationNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutInstallationNestedInput
 }
 
 export type InstallationCreateManyInput = {
@@ -437,12 +444,27 @@ export type InstallationUpdateOneRequiredWithoutPrinciplesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.InstallationUpdateToOneWithWhereWithoutPrinciplesInput, Prisma.InstallationUpdateWithoutPrinciplesInput>, Prisma.InstallationUncheckedUpdateWithoutPrinciplesInput>
 }
 
+export type InstallationCreateNestedOneWithoutReviewsInput = {
+  create?: Prisma.XOR<Prisma.InstallationCreateWithoutReviewsInput, Prisma.InstallationUncheckedCreateWithoutReviewsInput>
+  connectOrCreate?: Prisma.InstallationCreateOrConnectWithoutReviewsInput
+  connect?: Prisma.InstallationWhereUniqueInput
+}
+
+export type InstallationUpdateOneRequiredWithoutReviewsNestedInput = {
+  create?: Prisma.XOR<Prisma.InstallationCreateWithoutReviewsInput, Prisma.InstallationUncheckedCreateWithoutReviewsInput>
+  connectOrCreate?: Prisma.InstallationCreateOrConnectWithoutReviewsInput
+  upsert?: Prisma.InstallationUpsertWithoutReviewsInput
+  connect?: Prisma.InstallationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.InstallationUpdateToOneWithWhereWithoutReviewsInput, Prisma.InstallationUpdateWithoutReviewsInput>, Prisma.InstallationUncheckedUpdateWithoutReviewsInput>
+}
+
 export type InstallationCreateWithoutUserInput = {
   id: number
   accountLogin: string
   accountType: string
   createdAt?: Date | string
   principles?: Prisma.PrincipleSetCreateNestedManyWithoutInstallationInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutInstallationInput
 }
 
 export type InstallationUncheckedCreateWithoutUserInput = {
@@ -451,6 +473,7 @@ export type InstallationUncheckedCreateWithoutUserInput = {
   accountType: string
   createdAt?: Date | string
   principles?: Prisma.PrincipleSetUncheckedCreateNestedManyWithoutInstallationInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutInstallationInput
 }
 
 export type InstallationCreateOrConnectWithoutUserInput = {
@@ -496,6 +519,7 @@ export type InstallationCreateWithoutPrinciplesInput = {
   accountType: string
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutInstallationsInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutInstallationInput
 }
 
 export type InstallationUncheckedCreateWithoutPrinciplesInput = {
@@ -504,6 +528,7 @@ export type InstallationUncheckedCreateWithoutPrinciplesInput = {
   accountType: string
   createdAt?: Date | string
   userId: string
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutInstallationInput
 }
 
 export type InstallationCreateOrConnectWithoutPrinciplesInput = {
@@ -528,6 +553,7 @@ export type InstallationUpdateWithoutPrinciplesInput = {
   accountType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutInstallationsNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutInstallationNestedInput
 }
 
 export type InstallationUncheckedUpdateWithoutPrinciplesInput = {
@@ -536,6 +562,59 @@ export type InstallationUncheckedUpdateWithoutPrinciplesInput = {
   accountType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutInstallationNestedInput
+}
+
+export type InstallationCreateWithoutReviewsInput = {
+  id: number
+  accountLogin: string
+  accountType: string
+  createdAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutInstallationsInput
+  principles?: Prisma.PrincipleSetCreateNestedManyWithoutInstallationInput
+}
+
+export type InstallationUncheckedCreateWithoutReviewsInput = {
+  id: number
+  accountLogin: string
+  accountType: string
+  createdAt?: Date | string
+  userId: string
+  principles?: Prisma.PrincipleSetUncheckedCreateNestedManyWithoutInstallationInput
+}
+
+export type InstallationCreateOrConnectWithoutReviewsInput = {
+  where: Prisma.InstallationWhereUniqueInput
+  create: Prisma.XOR<Prisma.InstallationCreateWithoutReviewsInput, Prisma.InstallationUncheckedCreateWithoutReviewsInput>
+}
+
+export type InstallationUpsertWithoutReviewsInput = {
+  update: Prisma.XOR<Prisma.InstallationUpdateWithoutReviewsInput, Prisma.InstallationUncheckedUpdateWithoutReviewsInput>
+  create: Prisma.XOR<Prisma.InstallationCreateWithoutReviewsInput, Prisma.InstallationUncheckedCreateWithoutReviewsInput>
+  where?: Prisma.InstallationWhereInput
+}
+
+export type InstallationUpdateToOneWithWhereWithoutReviewsInput = {
+  where?: Prisma.InstallationWhereInput
+  data: Prisma.XOR<Prisma.InstallationUpdateWithoutReviewsInput, Prisma.InstallationUncheckedUpdateWithoutReviewsInput>
+}
+
+export type InstallationUpdateWithoutReviewsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  accountLogin?: Prisma.StringFieldUpdateOperationsInput | string
+  accountType?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutInstallationsNestedInput
+  principles?: Prisma.PrincipleSetUpdateManyWithoutInstallationNestedInput
+}
+
+export type InstallationUncheckedUpdateWithoutReviewsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  accountLogin?: Prisma.StringFieldUpdateOperationsInput | string
+  accountType?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  principles?: Prisma.PrincipleSetUncheckedUpdateManyWithoutInstallationNestedInput
 }
 
 export type InstallationCreateManyUserInput = {
@@ -551,6 +630,7 @@ export type InstallationUpdateWithoutUserInput = {
   accountType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   principles?: Prisma.PrincipleSetUpdateManyWithoutInstallationNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutInstallationNestedInput
 }
 
 export type InstallationUncheckedUpdateWithoutUserInput = {
@@ -559,6 +639,7 @@ export type InstallationUncheckedUpdateWithoutUserInput = {
   accountType?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   principles?: Prisma.PrincipleSetUncheckedUpdateManyWithoutInstallationNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutInstallationNestedInput
 }
 
 export type InstallationUncheckedUpdateManyWithoutUserInput = {
@@ -575,10 +656,12 @@ export type InstallationUncheckedUpdateManyWithoutUserInput = {
 
 export type InstallationCountOutputType = {
   principles: number
+  reviews: number
 }
 
 export type InstallationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   principles?: boolean | InstallationCountOutputTypeCountPrinciplesArgs
+  reviews?: boolean | InstallationCountOutputTypeCountReviewsArgs
 }
 
 /**
@@ -598,6 +681,13 @@ export type InstallationCountOutputTypeCountPrinciplesArgs<ExtArgs extends runti
   where?: Prisma.PrincipleSetWhereInput
 }
 
+/**
+ * InstallationCountOutputType without action
+ */
+export type InstallationCountOutputTypeCountReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReviewWhereInput
+}
+
 
 export type InstallationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -607,6 +697,7 @@ export type InstallationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   principles?: boolean | Prisma.Installation$principlesArgs<ExtArgs>
+  reviews?: boolean | Prisma.Installation$reviewsArgs<ExtArgs>
   _count?: boolean | Prisma.InstallationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["installation"]>
 
@@ -640,6 +731,7 @@ export type InstallationOmit<ExtArgs extends runtime.Types.Extensions.InternalAr
 export type InstallationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   principles?: boolean | Prisma.Installation$principlesArgs<ExtArgs>
+  reviews?: boolean | Prisma.Installation$reviewsArgs<ExtArgs>
   _count?: boolean | Prisma.InstallationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type InstallationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -654,6 +746,7 @@ export type $InstallationPayload<ExtArgs extends runtime.Types.Extensions.Intern
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     principles: Prisma.$PrincipleSetPayload<ExtArgs>[]
+    reviews: Prisma.$ReviewPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1057,6 +1150,7 @@ export interface Prisma__InstallationClient<T, Null = never, ExtArgs extends run
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   principles<T extends Prisma.Installation$principlesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Installation$principlesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PrincipleSetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reviews<T extends Prisma.Installation$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Installation$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1513,6 +1607,30 @@ export type Installation$principlesArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.PrincipleSetScalarFieldEnum | Prisma.PrincipleSetScalarFieldEnum[]
+}
+
+/**
+ * Installation.reviews
+ */
+export type Installation$reviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Review
+   */
+  select?: Prisma.ReviewSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Review
+   */
+  omit?: Prisma.ReviewOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReviewInclude<ExtArgs> | null
+  where?: Prisma.ReviewWhereInput
+  orderBy?: Prisma.ReviewOrderByWithRelationInput | Prisma.ReviewOrderByWithRelationInput[]
+  cursor?: Prisma.ReviewWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReviewScalarFieldEnum | Prisma.ReviewScalarFieldEnum[]
 }
 
 /**

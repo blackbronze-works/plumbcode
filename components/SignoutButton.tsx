@@ -6,7 +6,11 @@ import { Loader2, LogOut } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 
-export default function SignoutButton() {
+export default function SignoutButton({
+  label = "Sign out",
+}: {
+  label?: string;
+}) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -34,7 +38,7 @@ export default function SignoutButton() {
       ) : (
         <LogOut size={16} />
       )}
-      Sign out
+      {label}
     </Button>
   );
 }

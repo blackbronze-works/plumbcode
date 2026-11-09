@@ -402,6 +402,8 @@ export const ModelName = {
   Account: 'Account',
   Installation: 'Installation',
   PrincipleSet: 'PrincipleSet',
+  Review: 'Review',
+  ReviewFinding: 'ReviewFinding',
   Verification: 'Verification'
 } as const
 
@@ -418,7 +420,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "installation" | "principleSet" | "verification"
+    modelProps: "user" | "session" | "account" | "installation" | "principleSet" | "review" | "reviewFinding" | "verification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -792,6 +794,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Review: {
+      payload: Prisma.$ReviewPayload<ExtArgs>
+      fields: Prisma.ReviewFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ReviewFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ReviewFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
+        }
+        findFirst: {
+          args: Prisma.ReviewFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ReviewFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
+        }
+        findMany: {
+          args: Prisma.ReviewFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>[]
+        }
+        create: {
+          args: Prisma.ReviewCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
+        }
+        createMany: {
+          args: Prisma.ReviewCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ReviewCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>[]
+        }
+        delete: {
+          args: Prisma.ReviewDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
+        }
+        update: {
+          args: Prisma.ReviewUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
+        }
+        deleteMany: {
+          args: Prisma.ReviewDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ReviewUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ReviewUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>[]
+        }
+        upsert: {
+          args: Prisma.ReviewUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
+        }
+        aggregate: {
+          args: Prisma.ReviewAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateReview>
+        }
+        groupBy: {
+          args: Prisma.ReviewGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReviewGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ReviewCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReviewCountAggregateOutputType> | number
+        }
+      }
+    }
+    ReviewFinding: {
+      payload: Prisma.$ReviewFindingPayload<ExtArgs>
+      fields: Prisma.ReviewFindingFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ReviewFindingFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewFindingPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ReviewFindingFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewFindingPayload>
+        }
+        findFirst: {
+          args: Prisma.ReviewFindingFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewFindingPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ReviewFindingFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewFindingPayload>
+        }
+        findMany: {
+          args: Prisma.ReviewFindingFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewFindingPayload>[]
+        }
+        create: {
+          args: Prisma.ReviewFindingCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewFindingPayload>
+        }
+        createMany: {
+          args: Prisma.ReviewFindingCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ReviewFindingCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewFindingPayload>[]
+        }
+        delete: {
+          args: Prisma.ReviewFindingDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewFindingPayload>
+        }
+        update: {
+          args: Prisma.ReviewFindingUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewFindingPayload>
+        }
+        deleteMany: {
+          args: Prisma.ReviewFindingDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ReviewFindingUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ReviewFindingUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewFindingPayload>[]
+        }
+        upsert: {
+          args: Prisma.ReviewFindingUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewFindingPayload>
+        }
+        aggregate: {
+          args: Prisma.ReviewFindingAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateReviewFinding>
+        }
+        groupBy: {
+          args: Prisma.ReviewFindingGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReviewFindingGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ReviewFindingCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReviewFindingCountAggregateOutputType> | number
+        }
+      }
+    }
     Verification: {
       payload: Prisma.$VerificationPayload<ExtArgs>
       fields: Prisma.VerificationFieldRefs
@@ -973,6 +1123,43 @@ export const PrincipleSetScalarFieldEnum = {
 } as const
 
 export type PrincipleSetScalarFieldEnum = (typeof PrincipleSetScalarFieldEnum)[keyof typeof PrincipleSetScalarFieldEnum]
+
+
+export const ReviewScalarFieldEnum = {
+  id: 'id',
+  installationId: 'installationId',
+  repoFullName: 'repoFullName',
+  prNumber: 'prNumber',
+  prTitle: 'prTitle',
+  headSha: 'headSha',
+  additions: 'additions',
+  deletions: 'deletions',
+  changedFiles: 'changedFiles',
+  commitsChecked: 'commitsChecked',
+  commitsSkipped: 'commitsSkipped',
+  rulesChecked: 'rulesChecked',
+  findingCount: 'findingCount',
+  createdAt: 'createdAt'
+} as const
+
+export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
+
+
+export const ReviewFindingScalarFieldEnum = {
+  id: 'id',
+  reviewId: 'reviewId',
+  repoFullName: 'repoFullName',
+  source: 'source',
+  ruleId: 'ruleId',
+  ruleText: 'ruleText',
+  commitSha: 'commitSha',
+  severity: 'severity',
+  title: 'title',
+  file: 'file',
+  line: 'line'
+} as const
+
+export type ReviewFindingScalarFieldEnum = (typeof ReviewFindingScalarFieldEnum)[keyof typeof ReviewFindingScalarFieldEnum]
 
 
 export const VerificationScalarFieldEnum = {
@@ -1235,6 +1422,8 @@ export type GlobalOmitConfig = {
   account?: Prisma.AccountOmit
   installation?: Prisma.InstallationOmit
   principleSet?: Prisma.PrincipleSetOmit
+  review?: Prisma.ReviewOmit
+  reviewFinding?: Prisma.ReviewFindingOmit
   verification?: Prisma.VerificationOmit
 }
 
