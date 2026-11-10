@@ -5,11 +5,11 @@ const globalForPrisma = global as unknown as {
   prisma: PrismaClient;
 };
 
-const rawUrl = process.env.DATABASE_URL ?? "";
-const sep = rawUrl.includes("?") ? "&" : "?";
-const sslmode =
-  process.env.NODE_ENV === "production" ? "verify-full" : "verify-full";
-const connectionString = `${rawUrl}${sep}sslmode=${sslmode}`;
+const connectionString = process.env.DATABASE_URL ?? "";
+// const sep = rawUrl.includes("?") ? "&" : "?";
+// const sslmode =
+//   process.env.NODE_ENV === "production" ? "verify-full" : "verify-full";
+// const connectionString = `${rawUrl}${sep}sslmode=${sslmode}`;
 
 const adapter = new PrismaPg({
   connectionString,
