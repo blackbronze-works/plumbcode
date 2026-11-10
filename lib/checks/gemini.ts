@@ -7,10 +7,12 @@ export type GeminiResult =
       error: "model_not_configured" | "model_request_failed" | "model_timeout";
     };
 
-const DEFAULT_MODEL = "gemini-3.8-flash";
-const MODEL_TIMEOUT_MS = 90_000;
+// Measured fastest first. Re-test with scripts/gemini-ping.mjs when models change.
+const DEFAULT_MODEL = "gemini-3.5-flash-lite";
+const FALLBACK_MODELS = ["gemini-3.6-flash", "gemini-3.5-flash"];
+const MODEL_TIMEOUT_MS = 40_000;
 const MAX_OUTPUT_TOKENS = 16_384;
-const MAX_ATTEMPTS = 3;
+const MAX_ATTEMPTS = 1;
 
 type GeminiConfig = {
   apiKey: string;
@@ -33,10 +35,16 @@ function getGeminiConfig(): GeminiConfig | null {
 }
 
 function isTimeout(error: unknown): boolean {
-  return (
-    error instanceof Error &&
-    (error.name === "TimeoutError" || error.name === "AbortError")
-  );
+  if (typeof error !== "object" || error === null) return false;
+
+  const name = (error as { name?: unknown }).name;
+  return name === "TimeoutError" || name === "AbortError";
+}
+
+// Overloaded (429/5xx) or retired (404) models should fall through to the
+// next one instead of failing the whole review.
+function shouldTryNextModel(error: ApiError): boolean {
+  return error.status === 404 || error.status === 429 || error.status >= 500;
 }
 
 export async function generateJson({
@@ -51,45 +59,70 @@ export async function generateJson({
   const config = getGeminiConfig();
   if (!config) return { ok: false, error: "model_not_configured" };
 
-  try {
-    const ai = new GoogleGenAI({ apiKey: config.apiKey });
+  const ai = new GoogleGenAI({ apiKey: config.apiKey });
+  const models = [
+    config.model,
+    ...FALLBACK_MODELS.filter((model) => model !== config.model),
+  ];
 
-    const response = await ai.models.generateContent({
-      model: config.model,
-      contents: prompt,
-      config: {
-        systemInstruction,
-        responseMimeType: "application/json",
-        responseJsonSchema: jsonSchema,
-        maxOutputTokens: MAX_OUTPUT_TOKENS,
-        // Reviewing a diff is reasoning-light, and thought tokens count
-        // against maxOutputTokens.
-        thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
-        abortSignal: AbortSignal.timeout(MODEL_TIMEOUT_MS),
-        httpOptions: {
-          retryOptions: { attempts: MAX_ATTEMPTS },
+  let lastError: "model_request_failed" | "model_timeout" =
+    "model_request_failed";
+
+  for (const model of models) {
+    const started = Date.now();
+    const elapsed = () => `${Date.now() - started}ms`;
+
+    try {
+      const response = await ai.models.generateContent({
+        model,
+        contents: prompt,
+        config: {
+          systemInstruction,
+          responseMimeType: "application/json",
+          responseJsonSchema: jsonSchema,
+          maxOutputTokens: MAX_OUTPUT_TOKENS,
+          thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
+          abortSignal: AbortSignal.timeout(MODEL_TIMEOUT_MS),
+          httpOptions: {
+            retryOptions: { attempts: MAX_ATTEMPTS },
+          },
         },
-      },
-    });
-
-    return { ok: true, text: response.text ?? "" };
-  } catch (error) {
-    if (isTimeout(error)) {
-      console.error("Plumbcode model: request timed out");
-      return { ok: false, error: "model_timeout" };
-    }
-
-    if (error instanceof ApiError) {
-      console.error("Plumbcode model: Gemini returned an error", {
-        status: error.status,
       });
-      return { ok: false, error: "model_request_failed" };
-    }
 
-    console.error(
-      "Plumbcode model: request failed",
-      error instanceof Error ? error.message : "unknown error",
-    );
-    return { ok: false, error: "model_request_failed" };
+      console.info(
+        `Plumbcode model: ${model} answered in ${elapsed()} (prompt ${prompt.length} chars)`,
+      );
+      return { ok: true, text: response.text ?? "" };
+    } catch (error) {
+      if (isTimeout(error)) {
+        console.warn(
+          `Plumbcode model: ${model} timed out after ${elapsed()} (prompt ${prompt.length} chars)`,
+        );
+        lastError = "model_timeout";
+        continue;
+      }
+
+      if (error instanceof ApiError) {
+        console.error("Plumbcode model: Gemini returned an error", {
+          model,
+          status: error.status,
+          after: elapsed(),
+        });
+
+        lastError = "model_request_failed";
+        if (shouldTryNextModel(error)) continue;
+
+        return { ok: false, error: "model_request_failed" };
+      }
+
+      console.error(
+        `Plumbcode model: ${model} request failed after ${elapsed()}`,
+        error instanceof Error ? error.message : "unknown error",
+      );
+      lastError = "model_request_failed";
+    }
   }
+
+  console.error("Plumbcode model: all configured models failed");
+  return { ok: false, error: lastError };
 }

@@ -289,7 +289,7 @@ async function fetchCommitInputs(
         },
       );
 
-      const diff = renderFilesDiff(data.files ?? [], 12_000);
+      const diff = renderFilesDiff(data.files ?? [], 5_000);
 
       return {
         sha: commit.sha,
