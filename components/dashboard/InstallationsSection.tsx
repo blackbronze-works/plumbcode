@@ -1,4 +1,4 @@
-import { AlertCircle, ArrowUpRight, Plus } from "lucide-react";
+import { AlertCircle, ArrowUpRight } from "lucide-react";
 import { GithubIcon } from "@/components/GithubIcon";
 import ConnectGitHubButton from "@/components/dashboard/ConnectGitHubButton";
 import {
@@ -24,9 +24,6 @@ const card =
 
 const primaryAction =
   "inline-flex w-full items-center justify-center gap-2 rounded-full bg-neutral-950 px-6 py-3 font-sans text-sm font-medium text-white transition-colors hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950/30 focus-visible:ring-offset-2 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200 dark:focus-visible:ring-white/40 dark:focus-visible:ring-offset-neutral-950 sm:w-auto";
-
-const secondaryAction =
-  "inline-flex items-center gap-1.5 self-start rounded-sm font-sans text-sm font-medium text-neutral-700 underline-offset-4 transition-colors hover:text-neutral-950 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950/30 dark:text-neutral-300 dark:hover:text-white dark:focus-visible:ring-white/40";
 
 function ErrorAlert({
   code,
@@ -156,12 +153,6 @@ export default function InstallationsSection({
           </p>
         </div>
 
-        {installations.length > 0 && hasGitHubAccount && installUrl && (
-          <a href={installUrl} className={secondaryAction}>
-            <Plus size={14} aria-hidden="true" />
-            Add another installation
-          </a>
-        )}
       </div>
 
       {errorCode && (

@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { GitBranch } from "lucide-react";
 import AddRepositoryCard from "@/components/dashboard/AddRepositoryCard";
 import ConnectGitHubButton from "@/components/dashboard/ConnectGitHubButton";
+import RefreshButton from "@/components/dashboard/RefreshButton";
 import RepoCard from "@/components/dashboard/RepoCard";
 import RepositoriesSkeleton from "@/components/skeletons/RepositoriesSkeleton";
 import { getRepoActivity } from "@/lib/dashboard-data";
@@ -18,14 +19,6 @@ export const metadata = {
 export default function RepositoriesPage() {
   return (
     <div className="w-full">
-      <h1 className="font-barabara text-3xl tracking-tight text-neutral-950 dark:text-white">
-        Repositories
-      </h1>
-      <p className="mt-2 font-sans text-sm text-neutral-600 dark:text-neutral-400">
-        Each repository has its own principles. Pull requests are checked
-        against them.
-      </p>
-
       {/* Session and GitHub data stream in behind a skeleton so navigations
           between dashboard pages stay instant. */}
       <Suspense fallback={<RepositoriesSkeleton />}>
@@ -135,6 +128,19 @@ async function RepositoriesContent() {
 
   return (
     <>
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="font-barabara text-3xl tracking-tight text-neutral-950 dark:text-white">
+            Repositories
+          </h1>
+          <p className="mt-2 font-sans text-sm text-neutral-600 dark:text-neutral-400">
+            Each repository has its own principles. Pull requests are checked
+            against them.
+          </p>
+        </div>
+
+        {failedInstallations > 0 && <RefreshButton />}
+      </header>
       {failedInstallations > 0 && (
         <p
           role="alert"
