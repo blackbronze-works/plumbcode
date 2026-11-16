@@ -38,9 +38,12 @@ export const auth = betterAuth({
     },
   },
 
-  // Note: do not set onAPIError.errorURL to a dashboard-related path,
-  // otherwise session reads can trigger redirect loops.
-
+  // Send OAuth failures to the login page, which shows a friendly message for
+  // each error code. Do not point this at a dashboard path: session reads can
+  // then trigger redirect loops.
+  onAPIError: {
+    errorURL: "/login",
+  },
 
   plugins: [nextCookies()], // keep this last
 });

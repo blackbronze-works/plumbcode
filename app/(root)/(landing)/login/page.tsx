@@ -120,6 +120,8 @@ const authErrorMessages: Record<string, string> = {
     "GitHub didn't share a verified email address. Add a verified email to your GitHub account and try again.",
   email_not_verified: "Your GitHub email address isn't verified.",
   invalid_code: "The GitHub sign-in code expired. Please try again.",
+  invalid_callback_request:
+    "GitHub sign-in returned an incomplete response. Please try again.",
   no_code: "GitHub didn't return a sign-in code. Please try again.",
   state_mismatch:
     "Your GitHub sign-in session expired. Close this tab and start again.",
