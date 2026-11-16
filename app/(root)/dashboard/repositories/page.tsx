@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { connection } from "next/server";
 import { GitBranch } from "lucide-react";
 import AddRepositoryCard from "@/components/dashboard/AddRepositoryCard";
 import ConnectGitHubButton from "@/components/dashboard/ConnectGitHubButton";
@@ -29,6 +30,11 @@ export default function RepositoriesPage() {
 }
 
 async function RepositoriesContent() {
+  // Repositories are specific to the signed-in user and come from GitHub and
+  // the database. Wait for a real request so prerendering never starts a
+  // GitHub fetch that it aborts when the static shell is complete.
+  await connection();
+
   const session = await requireSession();
 
   const [installations, githubAccount] = await Promise.all([

@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { connection } from "next/server";
 import DashboardOverview from "@/components/dashboard/DashboardOverview";
 import InstallationsSection from "@/components/dashboard/InstallationsSection";
 import DashboardSkeleton from "@/components/skeletons/DashboardSkeleton";
@@ -28,6 +29,9 @@ export default function DashboardPage({ searchParams }: DashboardPageProps) {
 }
 
 async function DashboardContent({ searchParams }: DashboardPageProps) {
+  // The data below belongs to the signed-in user, so render it per request.
+  await connection();
+
   // The layout enforces auth. Calling the cached helper here only gives this
   // page the user id without a second Better Auth lookup.
   const session = await requireSession();
